@@ -43,3 +43,18 @@ The system is divided into three main layers:
    ```bash
    git clone [https://github.com/YOUR_USERNAME/autism-screening-ai.git](https://github.com/YOUR_USERNAME/autism-screening-ai.git)
    cd autism-screening-ai
+
+2. **Set up virtual environment:**
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   
+3. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+
+   Run the API:
+
+4. **Run the API:**
+   ```bash
+   uvicorn src.api.main:app --reload
