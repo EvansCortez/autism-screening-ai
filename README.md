@@ -37,10 +37,12 @@ This project is designed as a portfolio-ready example of:
 - `src/static/index.html` - Browser interface for intake, prediction, and report generation
 - `data/train.csv` - Training data
 - `models/autism_model.pkl` - Trained model pipeline
-- `models/metrics.json` - Saved metrics and feature list
+- `models/metrics.json` - Saved metrics, cross-validation scores, baseline comparison, and feature list
 - `notebooks/` - Exploratory analysis, model experiments, and workflow research
 - `requirements.txt` - Python dependencies
-- `tests/` - API and helper tests
+- `tests/` - API, training pipeline, and helper tests
+- `Dockerfile` - Container image for serving the app
+- `.github/workflows/ci.yml` - CI pipeline that runs the test suite
 
 ## Quick Start
 
@@ -88,6 +90,19 @@ jupyter lab
 ```
 
 Open `notebooks/01_data_exploration.ipynb` to start with the shared helpers in `notebooks/utils.py`.
+
+### 6) Run with Docker (optional)
+
+```bash
+docker build -t asd-predict .
+docker run -p 8000:8000 asd-predict
+```
+
+This serves the app using the model artifacts already committed in `models/`. Re-run `python -m src.train` and rebuild the image if you want the container to reflect a freshly trained model.
+
+## Continuous Integration
+
+`.github/workflows/ci.yml` runs `pytest` on every push and pull request to `main` against the committed dataset and model artifacts.
 
 ## API Endpoints
 
@@ -184,13 +199,16 @@ curl -X POST http://127.0.0.1:8000/screening-report \
 ## Model Performance (Current Artifacts)
 
 From `models/metrics.json`:
-- Accuracy: `1.0`
+- Held-out accuracy: `1.0`
+- 5-fold cross-validated accuracy: `1.0 (+/- 0.0)`
+- Majority-class baseline accuracy: `0.7305`
 - Training rows: `563`
 - Test rows: `141`
 
 Important interpretation note:
-- The current target label is closely related to the AQ screening questionnaire itself, so this score should be treated as a demo artifact, not evidence of clinical-grade predictive performance.
-- For production-grade evaluation, add cross-validation, stronger leakage checks, external validation, and a dataset that matches the intended population and use case.
+- Cross-validation confirms this isn't a fluke of one train/test split: accuracy is `1.0` across all 5 folds. The reason is that the AQ-10 `sum_score` deterministically implies the target label in this dataset (by the design of the AQ-10 screening tool itself, not a code bug), so a perfect score here should be treated as a demo artifact, not evidence of clinical-grade predictive performance.
+- The baseline accuracy (always predicting the majority class) is included in `metrics.json` specifically so this gap is visible rather than hidden.
+- For production-grade evaluation, add external validation and a dataset that matches the intended population and use case, since cross-validation alone cannot detect leakage that is baked into how the source dataset itself was labeled.
 
 ## Research Context
 
@@ -240,9 +258,8 @@ Important scope note for this repository:
 ## Roadmap Ideas
 
 - Add model versioning and experiment tracking
-- Add tests for training and API inference
-- Add Docker + CI pipeline
 - Compare additional classifiers and calibration methods
+- Add external validation against a different population/dataset
 
 ## Ethical and Clinical Disclaimer
 
