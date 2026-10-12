@@ -1,0 +1,10 @@
+feature_set,roc_auc_mean,roc_auc_sd_over_repeats,repeats
+age + gender + jaundice,0.5794575435352134,0.01878545602822436,3
+age + gender + jaundice + country,0.7428862519477407,0.005700810110786497,3
+age + gender + jaundice + ethnicity,0.7129963528021781,0.008008889094201114,3
+age + gender + jaundice + relation,0.6119963699251726,0.01067086290320085,3
+ethnicity only,0.7007191657677095,0.0076450216382837315,3
+'ethnicity unknown' flag only,0.5491121727367683,0.0011754446197310196,3
+"main set: age, gender, jaundice, country, ethnicity, relation",0.740501018818171,0.002700202847779779,3
+main set + family history,0.7420266776253831,0.003507287955784262,3
+"main set, no duplicate grouping",0.7374394274070649,0.008675420362705969,3

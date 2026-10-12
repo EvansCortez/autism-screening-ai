@@ -1,0 +1,39 @@
+{
+  "rows": 704,
+  "class_counts": {
+    "NO": 515,
+    "YES": 189
+  },
+  "missing_by_column": {
+    "relation": 95,
+    "ethnicity": 95,
+    "age": 2,
+    "gender": 0,
+    "age_desc": 0,
+    "result": 0,
+    "used_app_before": 0,
+    "country_of_res": 0,
+    "austim": 0,
+    "jaundice": 0,
+    "A1_Score": 0,
+    "A2_Score": 0,
+    "A10_Score": 0,
+    "A9_Score": 0,
+    "A8_Score": 0,
+    "A7_Score": 0,
+    "A6_Score": 0,
+    "A5_Score": 0,
+    "A4_Score": 0,
+    "A3_Score": 0,
+    "Class/ASD": 0
+  },
+  "invalid_aq_cells": 0,
+  "duplicate_full_rows": 5,
+  "age_flagged_rows": 21,
+  "age_min": 17.0,
+  "age_max": 383.0,
+  "score_rule_disagreements": 0,
+  "result_differs_from_sum": 0,
+  "duplicate_predictor_rows": 6,
+  "conflicting_predictor_groups": 0
+}

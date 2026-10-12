@@ -1,0 +1,44 @@
+{
+  "dataset": "uci_adult_426",
+  "rows": 704,
+  "class_counts": {
+    "0": 515,
+    "1": 189
+  },
+  "duplicate_full_rows": 5,
+  "duplicate_group_rows": 6,
+  "conflicting_matching_record_groups": 0,
+  "recorded_score_disagreements": 0,
+  "score_dependence": {
+    "conditional_label_entropy_bits": 0.0,
+    "empirical_score_group_purity": 1.0,
+    "mixed_label_scores": 0,
+    "singleton_score_groups": 0,
+    "observed_score_groups": 11,
+    "minimum_threshold_disagreements": 0,
+    "best_descriptive_thresholds": [
+      7.0
+    ],
+    "exact_threshold_agreement_observed": true
+  },
+  "declared_source_documentation": {
+    "source_url": "https://doi.org/10.24432/C5F019",
+    "citation": "Thabtah, F. (2017). UCI adult autism screening dataset (426); CC BY 4.0.",
+    "population": "Adult screening dataset",
+    "label_definition_status": "not_documented",
+    "label_evidence": "The ARFF declares Class/ASD as NO/YES. The attached UCI description calls the screening score automatically computed; it does not explicitly document target generation or clinician verification.",
+    "accessed": "2026-10-11",
+    "limitations": [
+      "Item direction encoding is inferred rather than fully documented; sum-score agreement can support but not prove this encoding.",
+      "Matching predictor records do not establish participant identity.",
+      "Self-selected screening records do not establish independently assessed clinical outcomes."
+    ],
+    "feature_rationale": "Residual features mirror the existing adult demo's age and five categorical fields. Family history, app use, and age_desc are excluded for comparability, not on evidence of irrelevance."
+  },
+  "confirmed": "Observed counts, score agreement, group overlap checks, and model metrics only",
+  "not_established": "Label-generation procedure, clinical validity, participant identity, or external clinical generalization",
+  "interpretation": "Exact empirical agreement is evidence of score-label dependence, not proof of how labels were collected. High purity in small or singleton score groups may be misleading.",
+  "uncertainty": "Repeated/fold metric standard deviations are descriptive; they are not independent confidence intervals",
+  "age_missing_or_outside_configured_range": 21,
+  "age_range_status": "research convention"
+}

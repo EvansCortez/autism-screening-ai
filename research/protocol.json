@@ -1,0 +1,13 @@
+{
+  "seeds": [42, 137, 2026],
+  "folds": 5,
+  "bootstrap_draws": 1000,
+  "tree_depths": [1, 2, 3, 4, 6, 8, 10, null],
+  "circularity_configs": ["research/datasets/adult.json", "research/datasets/child.json"],
+  "uncertainty": {"bootstrap_draws": 200, "permutation_draws": 200, "cluster_draws": 2000, "bootstrap_seed": 9102},
+  "inputs": {
+    "data/train.csv": "657021cddb337358640470cea758b72087bc4519e1234f7bc59c2b0160a0060d",
+    "research/sources/uci_adult_426.zip": "c57b29866c9715ff49ff4cce52228e6c460bdce3f615000c33b4d53df99d6d09",
+    "research/sources/uci_child_419.zip": "ba2f45225e96214f1c6611ff39b6e88ea69c375094369539cf121f258b13f480"
+  }
+}

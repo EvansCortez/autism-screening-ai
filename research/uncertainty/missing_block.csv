@@ -1,0 +1,3 @@
+group,n,label_yes_rate,mean_item_total,median_age,top_countries
+ethnicity and relation both missing,95,0.09473684210526316,3.5789473684210527,21.0,Jordan (42); United Arab Emirates (15); Russia (5)
+all other rows,609,0.2955665024630542,5.077175697865353,27.0,United States (112); India (81); New Zealand (76)

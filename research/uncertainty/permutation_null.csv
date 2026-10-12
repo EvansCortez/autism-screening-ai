@@ -1,0 +1,2 @@
+method,observed_auc_mean_over_repeats,null_draws,null_mean,null_95th_percentile,null_min,null_max,p_value_at_least_observed,note
+logistic/non_questionnaire,0.740501018818171,200,0.49860746391328914,0.551646975223027,0.4274173387441995,0.5771202547901577,0.004975124378109453,"observed and null use mean OOF AUC over identical repeat seeds; unrestricted row-label shuffling assumes exchangeability, unverified with duplicates/recruitment dependence; exploratory label association, not causes"

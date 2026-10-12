@@ -1,0 +1,10 @@
+Predictors (logistic regression),ROC-AUC mean,Repeat SD (not a CI),repeats
+age + gender + jaundice,0.5794575435352134,0.0187854560282243,3
+age + gender + jaundice + country,0.7428862519477407,0.0057008101107864,3
+age + gender + jaundice + ethnicity,0.7129963528021781,0.0080088890942011,3
+age + gender + jaundice + relation,0.6119963699251726,0.0106708629032008,3
+ethnicity only,0.7007191657677095,0.0076450216382837,3
+'ethnicity unknown' flag only,0.5491121727367683,0.001175444619731,3
+"main set: age, gender, jaundice, country, ethnicity, relation",0.740501018818171,0.0027002028477797,3
+main set + family history,0.7420266776253831,0.0035072879557842,3
+"main set, no duplicate grouping",0.7374394274070649,0.0086754203627059,3

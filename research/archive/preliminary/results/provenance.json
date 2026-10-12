@@ -1,0 +1,11 @@
+{
+  "sha256": "657021cddb337358640470cea758b72087bc4519e1234f7bc59c2b0160a0060d",
+  "python": "3.14.5",
+  "pandas": "3.0.1",
+  "numpy": "2.4.3",
+  "sklearn": "1.8.0",
+  "seed": 42,
+  "validation": "5-fold StratifiedGroupKFold on identical combined predictors",
+  "age_cleaning": "Outside 18-100 treated as missing; median imputed within training folds",
+  "score_rule": "sum_score >= 7; dataset reconstruction baseline"
+}

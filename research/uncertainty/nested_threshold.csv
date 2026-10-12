@@ -1,0 +1,4 @@
+seed,thresholds_chosen_per_fold,out_of_fold_errors,rows
+42,"[7, 7, 7, 7, 7]",0,704
+137,"[7, 7, 7, 7, 7]",0,704
+2026,"[7, 7, 7, 7, 7]",0,704
