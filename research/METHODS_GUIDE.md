@@ -31,7 +31,8 @@ that is carried mostly by country and ethnicity **[repo]**, which we do not expl
   keys some items to "agree" and others to "disagree", so the stored 0/1 must already be scored.
 - **Score** (`sum_score`, also the recorded `result`): items added up, 0 to 10. The two agree on
   all 704 rows **[repo]**.
-- **Label**: `Class/ASD`, YES or NO. The dataset documentation never defines it **[source]**.
+- **Label**: `Class/ASD`, YES or NO. Its generation and independent outcome assessment
+  are not established by the accessible documentation **[source]**.
 - **Threshold rule**: "predict YES when score is at least *t*". The published referral guide
   uses *t* = 6 **[source]**; the dataset's labels follow *t* = 7 **[repo]**.
 - **Screening-label agreement**: how often a model reproduces `Class/ASD`. It is not diagnostic

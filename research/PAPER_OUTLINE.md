@@ -31,7 +31,7 @@ diagnostic accuracy; no explanation of demographic associations; novelty is not 
 | The AQ-10 is a brief referral aid, with a published cut-point of 6 | ARC adult and child forms ("6 or above, consider referring") | **[source]** read in full |
 | Case-control validations exist for the AQ-10 | Allison 2012 (sensitivity 0.88, specificity 0.91 at 6, adults); Booth 2013 | **[source]** abstracts only |
 | ML papers on these datasets report near-perfect accuracy | Rasul 2023 (child 100%, adult 97.14%); ASD-Bench 2026 (10 of 17 models perfect on adults) | **[source]** full text of both preprints |
-| The dataset's label definition is undocumented | UCI page and description file | **[source]** read; confirmed absent |
+| Label generation and independent outcome assessment are not established in accessible documentation | UCI page and description file | **[source]**; author confirmation still missing |
 | Research question and three contributions (audit protocol; decomposition; open pipeline) | `STUDY.md`, `CIRCULARITY.md` | **[repo]** |
 
 ## 2. Related work
@@ -79,8 +79,8 @@ threshold-derived. Do not state novelty until these are read.
    cross-validation predictions as independent. Whole-procedure and cluster-aware intervals:
    **[repo]** (`research/uncertainty/`)
 8. **Reproducibility:** pinned `requirements.lock`, `scripts/reproduce.py`, input hashes.
-   **[repo]**; Claude verified a clean clone of `0a5cd7c` (task C5); subsequent Codex changes
-   require a new committed-checkout reproduction.
+   **[repo]**; Claude verified a clean clone of `0a5cd7c` (C5); Codex verified a fresh clone
+   of its code corrections `c7059ae` (X13): 38 tests, full command exit 0, tracked outputs unchanged.
 
 ## 5. Results
 
@@ -137,10 +137,11 @@ comparisons (only White-European has 30 or more positives); no systematic litera
 ## 9. Evidence still needed (summary)
 
 1. Label-generation procedure (dataset author or Thabtah 2017/2018).
-2. Independent review (Codex or the project lead) of the figures, tables and the new uncertainty module, which
-   were implemented and checked by Claude Code only.
+2. Independent review by Claude/lead of Codex's corrections and country-held-out analysis.
+   Codex reviewed Claude's original modules and six figures; this does not independently
+   verify the corrections Codex subsequently authored.
 3. A simulation of interval coverage that lives in the repository (it is still scratch-only).
-4. Clean-checkout verification of the committed branch (C5).
+4. Participant identifiers or documented collection structure to verify person-level separation.
 5. Adolescent dataset check.
 6. Systematic literature search; unread papers listed in section 2.
 7. Independently assessed outcome data for any diagnostic claim.
