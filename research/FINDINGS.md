@@ -56,7 +56,7 @@ than retrained. ROC-AUC variability is reported across repeats/folds.
 **How to read these intervals.** Cross-validation predictions are not independent
 observations: the five fold models share training data and the same rows recur across
 repeats. A binomial or conditional-bootstrap interval on pooled out-of-fold predictions
-therefore understates the true uncertainty (it treats fixed predictions as the data).
+omits retraining variability and is not a validated interval for generalization performance.
 The checks below come from `python -m src.uncertainty` (`research/uncertainty/`);
 `interval_table.csv` lists every interval with what it depends on.
 
@@ -64,14 +64,17 @@ The checks below come from `python -m src.uncertainty` (`research/uncertainty/`)
   fact about this file, not an estimate of future agreement. The cut-off chosen inside each
   training fold was 7 in all 15 folds, with 0 out-of-fold errors in every repeat
   (`nested_threshold.csv`). If a bound is wanted, the exact one-sided 95% upper bound on the
-  disagreement rate is 0.78% after adjusting for the 12 scanned cut-offs (0.52% two-sided for
-  a single pre-specified rule). Both assume independent rows from the same labeling process.
+  disagreement rate is 0.78% after adjusting for the 12 scanned cut-offs. This assumes
+  independent rows from the same labeling process; that assumption is not established.
 - **Exact intervals where their assumptions can hold.** Original 141-row holdout, 141/141
-  agreement for the serving model and for the `>= 7` rule: Clopper-Pearson [0.9742, 1.0000],
-  conditional on the fitted model. The documented `>= 6` rule, fixed before looking at the
+  agreement for the serving model: Clopper-Pearson [0.9742, 1.0000], conditional on the
+  fitted model and independent test rows. The post-hoc `>= 7` rule also agrees on 141/141,
+  but that holdout was used to discover the threshold, so no unadjusted interval is given.
+  The documented `>= 6` rule, fixed before looking at the
   data, on all rows: 634/704 = 0.9006, [0.8760, 0.9217] (Wilson [0.8762, 0.9205]).
 - **Whole-procedure bootstrap** (rows resampled, grouped cross-validation rerun, 200 draws;
-  resamples hold about 63% distinct rows, so the spread is somewhat overstated). Standard
+  resamples hold about 63% distinct rows, changing effective training size; coverage and the
+  direction of bias in this spread are unverified). Standard
   error of pooled accuracy: non-questionnaire logistic 0.0254 against a binomial 0.0176
   (ratio 1.45); tree without the sum 0.0192 against 0.0123 (ratio 1.56). The repeat SD in the
   main table (0.0086 and 0.0123) is split-to-split variability, not uncertainty about a
@@ -95,10 +98,23 @@ serving model's handling; the sensitivity cohort excludes them explicitly.
 
 With all ten items, their sum and the recorded result removed, only age and five categorical
 fields remain: accuracy 0.6804 against a 0.7315 majority baseline, ROC-AUC 0.7405 (main
-table). A label-shuffle test (200 shuffles of the labels, same grouped cross-validation) gives
-a shuffled-label AUC with mean 0.497, 95th percentile 0.551 and maximum 0.579, so 0.7405 is
-not what chance produces (0.005 is the smallest p-value 200 shuffles can give). The test shows
-that label signal exists in these fields; it says nothing about why.
+table). The exploratory label-shuffle analysis uses 200 shuffles, each evaluated with the
+same three repeat seeds as the observed mean AUC. Its per-shuffle values and summary are
+saved in `permutation_draws.csv` and `permutation_null.csv`. This checks association under
+unrestricted row-label exchangeability, not its cause. Duplicate records and unknown
+recruitment dependencies mean exchangeability is unverified, so its p-value is not a
+clinically validated or guaranteed-calibrated significance result.
+The corrected null has mean 0.4986, 95th percentile 0.5516, and range 0.4274-0.5771.
+All 200 draws are below the observed 0.7405; the add-one Monte Carlo value is 1/201
+(0.00498), subject to the exchangeability limitation above.
+
+**Country-held-out robustness.** Training the non-questionnaire logistic model on all
+other countries and pooling predictions gives ROC-AUC 0.6816, 0.6885 and 0.6892 across
+the three seeds (mean 0.6865), versus 0.7405 in grouped five-fold validation. Mean
+accuracy is 0.6771. Every row is predicted once per seed with its recorded country
+absent from training (`leave_country_out_*.csv`, report table 8). This is a different
+validation task, not evidence of a causal demographic mechanism or clinical transfer.
+Small single-class countries have undefined within-country AUC.
 
 Decomposition by predictor group (`residual_decomposition.csv`; logistic regression, mean
 pooled out-of-fold ROC-AUC over three repeats):

@@ -12,13 +12,16 @@ python3.14 scripts/reproduce.py
 This creates or uses the project virtual environment, installs `requirements.lock`,
 checks dependencies and input hashes, runs tests, and regenerates `evaluation/`,
 `circularity/`, `uncertainty/` and `report/` with the seeds, folds and draw counts in
-`protocol.json`. It preserves demo models.
+`protocol.json`. It then independently recomputes saved metrics from predictions and checks
+provenance hashes with `scripts/verify_outputs.py`. It preserves demo models.
 
 Coordination, review and writing aids: [TASKS.md](TASKS.md) (shared task list and handoff
 log), [METHODS_GUIDE.md](METHODS_GUIDE.md) (plain-language explanation of the methods),
 [PAPER_OUTLINE.md](PAPER_OUTLINE.md) (claims mapped to evidence, with gaps marked),
 [RELATED_WORK.md](RELATED_WORK.md) (literature with access levels),
 [AI_ASSISTANCE.md](AI_ASSISTANCE.md) (record of AI assistance).
+Codex's review of Claude's additions and subsequent corrections are in
+[CODEX_VERIFICATION.md](CODEX_VERIFICATION.md).
 
 ## Final artifacts
 
@@ -42,6 +45,11 @@ log), [METHODS_GUIDE.md](METHODS_GUIDE.md) (plain-language explanation of the me
 - `uncertainty/whole_procedure_bootstrap.csv`, `country_cluster_bootstrap.csv`,
   `nested_threshold.csv`, `permutation_null.csv`: checks on how far the binomial standard
   error can be trusted for cross-validated results (see `STUDY.md`).
+- `uncertainty/permutation_draws.csv`: individual shuffled-label statistics, averaged over
+  the same repeat seeds as the observed statistic.
+- `uncertainty/leave_country_out_metrics.csv`, `leave_country_out_by_country.csv`,
+  `leave_country_out_predictions.csv`: residual-model robustness when each recorded country
+  is absent from training. Single-class country AUC is undefined, not zero.
 - `uncertainty/residual_decomposition.csv`, `missing_block.csv`, `subgroup_counts.csv`:
   where the non-questionnaire signal comes from, and descriptive group counts.
 - `report/figures/` (SVG, PDF, PNG) and `report/tables/` (CSV, Markdown, LaTeX): publication

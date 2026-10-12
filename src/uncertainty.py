@@ -2,8 +2,8 @@
 
 These analyses accompany src/evaluate.py without changing it. They report what the data can and cannot
 support: a count of disagreements is a fact about this file; intervals describe sampling noise only under
-stated assumptions; cross-validation predictions are not independent observations, so interval methods
-that treat them as independent are labeled as lower bounds on uncertainty.
+stated assumptions; cross-validation predictions are not independent observations, so treating them as
+independent does not give a validated generalization interval.
 """
 
 import argparse
@@ -18,9 +18,9 @@ import scipy
 import sklearn
 from scipy import stats
 from sklearn.metrics import roc_auc_score
-from sklearn.model_selection import StratifiedGroupKFold, StratifiedKFold
+from sklearn.model_selection import LeaveOneGroupOut, StratifiedGroupKFold, StratifiedKFold
 
-from src.evaluate import FEATURES, make_model, predictor_groups
+from src.evaluate import FEATURES, make_model, measure, predictor_groups
 from src.train import AQ_COLUMNS, CATEGORICAL_COLUMNS, DATA_PATH, ROOT_DIR, load_dataset
 
 ALPHA = 0.05
@@ -84,7 +84,8 @@ def whole_procedure_bootstrap(frame, y, groups, kind, feature_set, draws, seed):
     """Resample rows, rerun grouped cross-validation on each resample, and record pooled accuracy and AUC.
 
     Copies of a row (and rows with identical predictors) stay in one fold. A bootstrap sample contains only
-    about 63% distinct rows, which inflates the spread relative to a fresh sample of the same size.
+    about 63% distinct rows. This changes the effective training sample; coverage and the direction
+    of any bias in the spread have not been established for this procedure.
     """
     rows = []
     for draw in range(draws):
@@ -97,14 +98,21 @@ def whole_procedure_bootstrap(frame, y, groups, kind, feature_set, draws, seed):
     return pd.DataFrame(rows)
 
 
-def permutation_null(frame, y, groups, kind, feature_set, draws, seed):
-    """Pooled out-of-fold AUC when labels are randomly shuffled (a null with no label signal)."""
+def permutation_null(frame, y, groups, kind, feature_set, draws, seed, repeat_seeds=(42, 137, 2026)):
+    """Mean repeated OOF AUC per shuffle, using the same statistic as the observed result.
+
+    An unrestricted shuffle assumes exchangeable row labels. Duplicates and unobserved recruitment
+    dependencies make this an exploratory null, not a guarantee of calibrated inference.
+    """
     rng = np.random.default_rng(seed)
     values = []
     for _ in range(draws):
         shuffled = rng.permutation(y)
-        _, ranking = pooled_oof(frame, shuffled, groups, kind, feature_set, seed)
-        values.append(float(roc_auc_score(shuffled, ranking)))
+        aucs = []
+        for repeat_seed in repeat_seeds:
+            _, ranking = pooled_oof(frame, shuffled, groups, kind, feature_set, repeat_seed)
+            aucs.append(float(roc_auc_score(shuffled, ranking)))
+        values.append(float(np.mean(aucs)))
     return np.asarray(values)
 
 
@@ -133,6 +141,10 @@ def interval_table(audit, frame, y, thresholds):
         low, high = exact_interval(correct, n)
         rows.append(dict(quantity=name, correct=correct, n=n, estimate=correct / n, method="Clopper-Pearson", lower=low, upper=high,
                          conditional_on="the fitted model (or rule) and independent test rows", status="acceptable if rows are independent"))
+        if key == "aq_ge7":
+            rows[-1].update(method="count only", lower=np.nan, upper=np.nan,
+                            conditional_on="this file; threshold found using these labels",
+                            status="post-hoc rule: original holdout is not independent of threshold discovery")
     n = len(frame)
     correct6 = int(((frame.sum_score >= 6).astype(int).to_numpy() == y).sum())
     low, high = exact_interval(correct6, n)
@@ -146,7 +158,7 @@ def interval_table(audit, frame, y, thresholds):
     rows.append(dict(quantity="Rule total >= 7 (found after looking at these labels), all 704 rows", correct=correct7, n=n, estimate=correct7 / n, method="count only",
                      lower=np.nan, upper=np.nan, conditional_on="this file", status=f"descriptive fact: {errors7} disagreements; not an estimate of future agreement"))
     if errors7 == 0:
-        for label, candidates, two_sided in [("two-sided 95%, single pre-specified rule", 1, True), (f"one-sided 95%, adjusted for {len(thresholds)} scanned cut-offs", len(thresholds), False)]:
+        for label, candidates, two_sided in [(f"one-sided 95%, adjusted for {len(thresholds)} scanned cut-offs", len(thresholds), False)]:
             rows.append(dict(quantity=f"Upper bound on disagreement rate for rule >= 7 ({label})", correct=correct7, n=n, estimate=0.0, method="exact, zero errors",
                              lower=0.0, upper=zero_error_upper_bound(n, candidates=candidates, two_sided=two_sided),
                              conditional_on="independent rows from the same labeling process", status="conditional; not clinical accuracy"))
@@ -199,6 +211,33 @@ def residual_decomposition(frame, y, groups, seeds):
     rows.append(dict(feature_set="main set, no duplicate grouping", roc_auc_mean=float(np.mean(ungrouped)),
                      roc_auc_sd_over_repeats=float(np.std(ungrouped, ddof=1)), repeats=len(seeds)))
     return pd.DataFrame(rows)
+
+
+def leave_country_out(frame, y, seeds):
+    """Train on all other recorded countries; pool predictions once per row per seed.
+
+    Small countries may contain only one class, so country-specific AUC can be undefined.
+    The pooled AUC is not a country-level average or an external clinical validation.
+    """
+    countries = frame["country_of_res"].to_numpy()
+    splits = list(LeaveOneGroupOut().split(frame, y, countries))
+    numeric, categorical = FEATURES["non_questionnaire"]
+    pooled, per_country, predictions = [], [], []
+    for seed in seeds:
+        prediction, ranking = np.zeros(len(frame), dtype=int), np.zeros(len(frame))
+        for train, test in splits:
+            if len(np.unique(y[train])) != 2:
+                raise ValueError("Country-held-out training set requires both classes")
+            model = make_model("logistic", numeric, categorical, seed).fit(frame.iloc[train], y[train])
+            prediction[test] = model.predict(frame.iloc[test])
+            ranking[test] = model.predict_proba(frame.iloc[test])[:, 1]
+            per_country.append(dict(seed=seed, country=countries[test[0]], n=len(test),
+                                    **measure(y[test], prediction[test], ranking[test])))
+        pooled.append(dict(seed=seed, n=len(frame), countries=len(splits), **measure(y, prediction, ranking)))
+        predictions.extend(dict(seed=seed, row_index=i, country=countries[i], target=int(y[i]),
+                                prediction=int(prediction[i]), ranking_score=float(ranking[i]))
+                           for i in range(len(frame)))
+    return pd.DataFrame(pooled), pd.DataFrame(per_country), pd.DataFrame(predictions)
 
 
 def missing_block_table(frame, y):
@@ -260,20 +299,25 @@ def main():
                               se_ratio=float(draws.accuracy.std(ddof=1) / binomial_se), bootstrap_lower=float(draws.accuracy.quantile(ALPHA / 2)),
                               bootstrap_upper=float(draws.accuracy.quantile(1 - ALPHA / 2)), auc_se=float(draws.roc_auc.std(ddof=1)),
                               distinct_row_fraction=float(draws.distinct_row_fraction.mean()),
-                              caveat="resamples hold ~63% distinct rows, so the spread is somewhat overstated; no interval here treats cross-validation predictions as independent"))
+                              caveat="resamples hold ~63% distinct rows; coverage and direction of bias are unverified; no interval here treats cross-validation predictions as independent"))
     pd.DataFrame(boot_rows).to_csv(args.output / "whole_procedure_bootstrap.csv", index=False)
 
     observed = []
     for seed in args.seeds:
         _, ranking = pooled_oof(frame, y, groups, "logistic", "non_questionnaire", seed)
         observed.append(float(roc_auc_score(y, ranking)))
-    null = permutation_null(frame, y, groups, "logistic", "non_questionnaire", args.permutation_draws, args.bootstrap_seed)
+    null = permutation_null(frame, y, groups, "logistic", "non_questionnaire", args.permutation_draws, args.bootstrap_seed, args.seeds)
+    pd.DataFrame({"draw": np.arange(len(null)), "mean_repeated_oof_auc": null}).to_csv(args.output / "permutation_draws.csv", index=False)
     pd.DataFrame([dict(method="logistic/non_questionnaire", observed_auc_mean_over_repeats=float(np.mean(observed)), null_draws=len(null), null_mean=float(null.mean()),
-                       null_95th_percentile=float(np.quantile(null, 0.95)), null_max=float(null.max()),
+                       null_95th_percentile=float(np.quantile(null, 0.95)), null_min=float(null.min()), null_max=float(null.max()),
                        p_value_at_least_observed=float((1 + (null >= np.mean(observed)).sum()) / (len(null) + 1)),
-                       note="labels shuffled over all rows; tests for any label signal, not for causes of it")]).to_csv(args.output / "permutation_null.csv", index=False)
+                       note="observed and null use mean OOF AUC over identical repeat seeds; unrestricted row-label shuffling assumes exchangeability, unverified with duplicates/recruitment dependence; exploratory label association, not causes")]).to_csv(args.output / "permutation_null.csv", index=False)
 
     residual_decomposition(frame, y, groups, args.seeds).to_csv(args.output / "residual_decomposition.csv", index=False)
+    country_metrics, country_details, country_predictions = leave_country_out(frame, y, args.seeds)
+    country_metrics.to_csv(args.output / "leave_country_out_metrics.csv", index=False)
+    country_details.to_csv(args.output / "leave_country_out_by_country.csv", index=False)
+    country_predictions.to_csv(args.output / "leave_country_out_predictions.csv", index=False)
     missing_block_table(frame, y).to_csv(args.output / "missing_block.csv", index=False)
     subgroup_table(frame, y).to_csv(args.output / "subgroup_counts.csv", index=False)
 

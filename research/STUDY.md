@@ -108,7 +108,7 @@ future performance. ROC-AUC uncertainty is summarized by repeat/fold SD only.
 **Cross-validation predictions are not independent observations.** The five fold models share
 training data, the same rows recur across repeats, and Bengio and Grandvalet (2004) prove that no
 unbiased estimator of the variance of K-fold cross-validation exists. An exact or Wilson interval
-on pooled out-of-fold predictions therefore understates uncertainty. In a simulation with known
+on pooled out-of-fold predictions does not provide a validated generalization interval. In a simulation with known
 truth (independent rows, stable model) exact intervals covered 88-91% at a nominal 95%. The
 `uncertainty/` analyses (`python -m src.uncertainty`) report, with what each depends on:
 
@@ -118,11 +118,19 @@ truth (independent rows, stable model) exact intervals covered 88-91% at a nomin
   number of scanned cut-offs;
 - a nested check that the cut-off chosen inside each training fold is always 7;
 - a bootstrap of the whole cross-validation procedure for the imperfect models (resamples hold about
-  63% distinct rows, so the spread is somewhat overstated);
+  63% distinct rows, changing effective training size; coverage and the direction of bias
+  in this spread are unverified);
 - a country-cluster bootstrap, because errors of models that use country or ethnicity cluster by country;
-- a label-shuffle null for the non-questionnaire ROC-AUC, which tests for any label signal, not its cause;
+- an exploratory label-shuffle null for non-questionnaire ROC-AUC: observed and shuffled
+  statistics both average pooled AUC over the same three repeat seeds. Unrestricted shuffling
+  assumes exchangeable labels; duplicates and recruitment dependence make that assumption
+  uncertain. It tests association, not its cause. Per-shuffle statistics are saved;
 - a decomposition of that signal by predictor group, and descriptive subgroup counts with Wilson
   intervals (sampling uncertainty only; categories as recorded).
+- leave-one-country-out non-questionnaire logistic validation, repeated with the same seeds:
+  preprocessing and oversampling are fitted on other countries only. We pool one prediction
+  per row per seed. Within-country AUC is undefined for single-class countries. This is an
+  internal geographic robustness check, not external clinical validation.
 
 "+/- SD over repeats" is split-to-split variability, not a confidence interval.
 

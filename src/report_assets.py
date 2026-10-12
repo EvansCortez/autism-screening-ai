@@ -62,7 +62,7 @@ def load(evaluation, circularity, uncertainty=None):
         label_child=pd.read_csv(circularity / "child" / "label_by_score.csv"),
     )
     if uncertainty is not None:
-        for name in ["interval_table", "whole_procedure_bootstrap", "country_cluster_bootstrap", "permutation_null", "residual_decomposition"]:
+        for name in ["interval_table", "whole_procedure_bootstrap", "country_cluster_bootstrap", "permutation_null", "residual_decomposition", "leave_country_out_metrics"]:
             data[name] = pd.read_csv(uncertainty / f"{name}.csv")
     return data
 
@@ -189,9 +189,9 @@ def figure_residual_signal(data, directory):
     table = table.iloc[::-1]
     fig, ax = plt.subplots(figsize=(7.2, 3.8))
     ax.barh(table.label, table.roc_auc_mean, color=PALETTE["sky"], edgecolor="black", linewidth=0.5)
-    ax.axvspan(null.null_mean, null.null_max, color=PALETTE["gray"], alpha=0.25, label=f"shuffled-label range ({null.null_draws:.0f} shuffles)")
+    ax.axvspan(null.null_min, null.null_max, color=PALETTE["gray"], alpha=0.25, label=f"shuffled-label range ({null.null_draws:.0f} shuffles)")
     ax.axvline(0.5, color="black", linewidth=0.8)
-    ax.set_xlim(0.45, 0.8)
+    ax.set_xlim(min(0.4, null.null_min - 0.01), max(0.8, null.null_max + 0.01))
     ax.set_xlabel("ROC-AUC, pooled out-of-fold (mean of 3 repeats)")
     ax.set_title("Signal left after removing all questionnaire items")
     ax.legend(frameon=False, loc="upper right", fontsize=8)
@@ -238,6 +238,8 @@ def build_tables(data, directory):
                     "Whole-procedure bootstrap and country-cluster checks against the binomial standard error")
         write_table(data["residual_decomposition"].rename(columns={"feature_set": "Predictors (logistic regression)", "roc_auc_mean": "ROC-AUC mean", "roc_auc_sd_over_repeats": "Repeat SD (not a CI)"}),
                     directory, "table7_residual_signal", "Residual signal without questionnaire items")
+        write_table(data["leave_country_out_metrics"], directory, "table8_country_held_out",
+                    "Non-questionnaire logistic regression: pooled leave-one-country-out agreement by seed; not clinical external validation")
 
 
 def main():

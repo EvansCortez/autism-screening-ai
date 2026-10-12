@@ -52,6 +52,7 @@ def main():
         "--bootstrap-seed", uncertainty["bootstrap_seed"])
     run(python, "-m", "src.report_assets", "--evaluation", "research/evaluation", "--circularity", "research/circularity",
         "--uncertainty", "research/uncertainty", "--output", "research/report")
+    run(python, "scripts/verify_outputs.py")
     print("Final experiments, circularity audits, uncertainty analyses, and report assets reproduced.", flush=True)
 
 

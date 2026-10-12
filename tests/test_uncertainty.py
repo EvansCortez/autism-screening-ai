@@ -8,6 +8,8 @@ from src.train import AQ_COLUMNS, CATEGORICAL_COLUMNS
 from src.uncertainty import (
     cluster_bootstrap,
     exact_interval,
+    interval_table,
+    leave_country_out,
     missing_block_table,
     nested_threshold,
     permutation_null,
@@ -75,6 +77,55 @@ def test_permutation_null_centers_near_chance_for_uninformative_features():
     frame, y, groups = synthetic_frame(rows=200, seed=5)
     values = permutation_null(frame, y, groups, "logistic", "non_questionnaire", 12, 4)
     assert len(values) == 12 and abs(values.mean() - 0.5) < 0.1
+
+
+def test_permutation_null_uses_all_observed_repeat_seeds(monkeypatch):
+    frame, y, groups = synthetic_frame()
+    calls = []
+
+    def fake_oof(frame, labels, groups, kind, feature_set, seed):
+        calls.append((seed, labels.copy()))
+        return labels, labels.astype(float) if seed == 42 else 1 - labels.astype(float)
+
+    monkeypatch.setattr("src.uncertainty.pooled_oof", fake_oof)
+    values = permutation_null(frame, y, groups, "logistic", "non_questionnaire", 2, 4, [42, 137])
+    assert list(values) == [0.5, 0.5]
+    assert [seed for seed, _ in calls] == [42, 137, 42, 137]
+    np.testing.assert_array_equal(calls[0][1], calls[1][1])
+
+
+def test_posthoc_threshold_has_no_unadjusted_interval():
+    frame, y, _ = synthetic_frame(rule=7)
+    counts = dict(tn=100, fp=0, fn=0, tp=41)
+    audit = {"legacy_holdout_comparison": {name: counts for name in ["logistic", "aq_ge6", "aq_ge7"]}}
+    table = interval_table(audit, frame, y, list(range(12)))
+    holdout = table[table.quantity == "Rule total >= 7, original holdout"].iloc[0]
+    assert holdout.method == "count only" and pd.isna(holdout.lower)
+    assert not table.quantity.str.contains("single pre-specified").any()
+
+
+def test_leave_country_out_keeps_countries_out_of_training(monkeypatch):
+    frame, y, _ = synthetic_frame(rows=160)
+    country_indices = []
+
+    class FakeModel:
+        def fit(self, training, labels):
+            self.countries = set(training.country_of_res)
+            return self
+
+        def predict(self, testing):
+            assert self.countries.isdisjoint(set(testing.country_of_res))
+            country_indices.extend(testing.index.tolist())
+            return np.zeros(len(testing), dtype=int)
+
+        def predict_proba(self, testing):
+            return np.tile([0.6, 0.4], (len(testing), 1))
+
+    monkeypatch.setattr("src.uncertainty.make_model", lambda *args: FakeModel())
+    metrics, countries, predictions = leave_country_out(frame, y, [42])
+    assert sorted(country_indices) == list(range(len(frame)))
+    assert metrics.iloc[0].n == len(frame) and countries.n.sum() == len(frame)
+    assert not predictions.row_index.duplicated().any()
 
 
 def test_nested_threshold_recovers_an_exact_rule_without_looking_at_validation_rows():

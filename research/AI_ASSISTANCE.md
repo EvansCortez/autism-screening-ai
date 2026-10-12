@@ -4,17 +4,15 @@ Purpose: a factual log of what AI tools did on this project, what a human decide
 AI output was checked. It is a working record, not a disclosure statement. Check your
 university's and the target venue's policy on AI use before writing the paper's disclosure.
 
-Status: **partial.** Claude Code's section is written from this conversation. Codex's and the
-project lead's sections must be completed by them; I only list what is observable in the
-repository and in the project lead's instructions. Do not treat the Codex section as
-authoritative until Codex has confirmed it.
+Status: **partial.** Claude Code and Codex have recorded their activity. The project lead's
+section still needs their own account and verification; neither agent may invent it.
 
 ## Tools
 
 | Tool | Model identifiers seen in this work | Role |
 |---|---|---|
 | Claude Code (Anthropic) | Sonnet 5 (commit trailer 2026-09-17); Sonnet 5.5 (session setting 2026-10-11) | Review, literature verification, statistical review, independent reproduction, coordination documents |
-| Codex (OpenAI) | not recorded here | Implementation of experiments, pinned environment, one-command reproduction, explanatory analyses (per the project lead) |
+| Codex (OpenAI) | Exact deployed model identifier/version unavailable in this session; not inferred from product name | Research implementation, reproducibility, review of Claude's additions |
 
 ## Claude Code activity
 
@@ -30,10 +28,12 @@ authoritative until Codex has confirmed it.
 | 2026-10-11 to 2026-10-12 | **Implemented tasks the project lead had assigned to Codex** (X7 figures and tables, X8 uncertainty reporting, X9 reproducibility fixes, X10 residual-signal analysis) after Codex made no repository change for 27 minutes: new `src/uncertainty.py` and `src/report_assets.py`, two small edits to `src/evaluate.py`, pinned matplotlib, extended `scripts/reproduce.py`, 11 new tests, updates to `FINDINGS.md`, `STUDY.md`, `CIRCULARITY.md`, README. The claim was logged in `TASKS.md` before work started. | **Not a decision of the project lead.** It departs from the assigned division of labor; the project lead should review and may reject it. | Full pipeline regenerated in a fresh Python 3.14.5 environment (34 tests pass); existing result tables unchanged; every number added to `FINDINGS.md` checked by script against the outputs. **The implementer and the verifier are the same agent, so this is not independent verification.** |
 | 2026-10-12 | Committed the work on branch `research/label-circularity`, pushed it, and opened a pull request (merge left to the project lead) | Project lead requested | Clean-clone reproduction of the committed branch (see `TASKS.md` C5) |
 
-## Codex activity (to be completed by Codex)
+## Codex activity (confirmed by Codex, 2026-10-12)
 
-Observed in the repository, attributed to Codex by the project lead's description. Codex should
-confirm, add dates, and summarize its prompts and the decisions it made.
+The project lead requested the research question, source verification, leakage checks, fold-safe
+model comparison, explanatory analyses, reusable dataset audit, pinned reproduction, documentation,
+and a research PR without merging. Codex confirms implementing the following before Claude's
+final review; precise dates of the earlier sessions are not recoverable from the current record.
 
 - `src/evaluate.py`, `src/circularity_audit.py`, `scripts/reproduce.py`, `tests/test_evaluate.py`,
   `tests/test_circularity_audit.py`
@@ -43,8 +43,30 @@ confirm, add dates, and summarize its prompts and the decisions it made.
 - `research/STUDY.md`, `research/FINDINGS.md`, `research/CIRCULARITY.md`, `research/README.md`
 - `research/evaluation/`, `research/circularity/`, `research/sources/` (UCI archives), README rewrite
 
-Not yet recorded: Codex's model name and version, session dates, which of its design choices were
-the project lead's instructions and which were its own.
+Codex selected the three seeds, grouped five-fold validation, model hyperparameters, predictor
+ablations, source hashes, conditional group bootstrap and strict Python-version guard as implementation
+choices. They were not clinical recommendations or decisions made by the project lead.
+
+On 2026-10-12, while Claude was editing, Codex obeyed the project lead's explicit read-only
+instruction. Read-only checks re-derived the 90 pooled metric rows, group assignments and a
+questionnaire-only coefficient fit. After the project lead confirmed Claude was done, Codex
+took the `TASKS.md` lock, reviewed the new uncertainty and report modules, and corrected:
+
+- A permutation test compared observed three-repeat mean AUC with single-repeat null AUC.
+  Both now use identical repeat seeds/statistics; individual null draws are saved.
+- A residual-signal figure labeled mean-to-maximum as the null range; it now uses minimum-to-maximum.
+- The post-hoc threshold had an unadjusted original-holdout interval and a pre-specified-rule
+  bound. These were removed; the selection-adjusted conditional bound remains.
+- Bootstrap spread was said to be necessarily overstated. Its direction of bias and coverage
+  are unverified; documentation now states that limitation and the permutation exchangeability assumption.
+
+Codex added regression tests and `scripts/verify_outputs.py` to independently recalculate metrics
+from predictions and check raw score-label agreement, null summaries and provenance hashes.
+Codex also added the deferred leave-one-country-out residual-model analysis, saving pooled and
+country-specific metrics and predictions, and a training-country separation test.
+Run results, visual inspection and the next independent-review handoff are recorded in `TASKS.md`.
+Codex's fixes are not themselves independently verified by Claude merely because Codex reviewed
+Claude's earlier implementation. The project lead retains final interpretation and merge authority.
 
 ## Project lead decisions (to be completed by the project lead)
 

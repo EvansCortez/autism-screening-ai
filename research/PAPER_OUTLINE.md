@@ -4,8 +4,8 @@ Working title (tentative): *Reconstructing a score threshold: what machine-learn
 the UCI autism screening datasets measures.*
 
 Every claim below points to the evidence for it and a status. Tags as in
-[METHODS_GUIDE.md](METHODS_GUIDE.md): **[repo]** reproducible in the repository and independently
-verified; **[scratch]** computed in Claude Code scratch scripts, reproduced in a clean
+[METHODS_GUIDE.md](METHODS_GUIDE.md): **[repo]** reproducible in the repository (verification
+status is recorded in `TASKS.md`); **[scratch]** computed in Claude Code scratch scripts, reproduced in a clean
 environment but not yet in the repository; **[source]** read from a cited source;
 **[hypothesis]**; **MISSING** = evidence does not exist yet.
 
@@ -79,7 +79,8 @@ threshold-derived. Do not state novelty until these are read.
    cross-validation predictions as independent. Whole-procedure and cluster-aware intervals:
    **[repo]** (`research/uncertainty/`)
 8. **Reproducibility:** pinned `requirements.lock`, `scripts/reproduce.py`, input hashes.
-   **[repo]**; clean-checkout verification of the committed branch: **MISSING** (task C5)
+   **[repo]**; Claude verified a clean clone of `0a5cd7c` (task C5); subsequent Codex changes
+   require a new committed-checkout reproduction.
 
 ## 5. Results
 
@@ -91,17 +92,18 @@ threshold-derived. Do not state novelty until these are read.
 | R3b | Leaf size also matters (unlimited depth, leaf 1: 0.9332) | scratch | **[scratch]** |
 | R4 | Raw item coefficients all positive, 3.74-4.39 | `questionnaire_coefficient_summary.csv` | **[repo]** |
 | R5 | Non-questionnaire: accuracy 0.6804, AUC 0.7405 (adult); child AUC 0.5834 | `summary.csv`, `circularity/*/summary.csv` | **[repo]** |
-| R6 | Residual signal decomposed: country and ethnicity carry it; label-shuffle null (observed AUC 0.7405; shuffled mean 0.497, max 0.579) | `uncertainty/residual_decomposition.csv`, `permutation_null.csv` | **[repo]** |
+| R6 | Residual signal associated with country and ethnicity fields; exploratory label-shuffle null using the same three-repeat statistic as the observed AUC 0.7405 | `uncertainty/residual_decomposition.csv`, `permutation_null.csv`, `permutation_draws.csv` | **[repo]**; exchangeability unverified |
 | R7 | Child dataset has the same threshold structure (cutoff 7; 40 disagreements for 6) | `research/circularity/child` | **[repo]** |
 | R8 | Sensitivity cohort: rule 7 and items-only perfect; with-sum 0.9995, without-sum 0.9966 | `summary.csv` | **[repo]** |
 | R9 | Whole-procedure bootstrap (SE ratios 1.45 and 1.56), country clustering (3.7-3.8 for non-questionnaire models), nested cut-off (7 in 15 of 15 folds) | `uncertainty/*.csv` | **[repo]** |
 | R9b | Exact intervals cover 88-91% at nominal 95% in a known-truth simulation | scratch | **[scratch]** |
 | R10 | Subgroup counts with Wilson intervals, descriptive only | `uncertainty/subgroup_counts.csv` | **[repo]** |
+| R11 | Country-held-out residual logistic mean AUC 0.6865 versus grouped five-fold 0.7405; different validation tasks, no causal interpretation | `uncertainty/leave_country_out_metrics.csv`, `report/tables/table8_country_held_out.csv` | **[repo]**; new Codex analysis, independent review pending |
 
 **Figures and tables (task X7):** generated in `research/report/` (six figures as SVG, PDF and PNG;
-seven tables as CSV, Markdown and LaTeX): label by score; cut-off scan; accuracy by model and feature set;
-item weights; tree depth; residual signal. Layout was checked visually by Claude Code only; the project
-lead should review them before submission.
+eight tables as CSV, Markdown and LaTeX): label by score; cut-off scan; accuracy by model and feature set;
+item weights; tree depth; residual signal; country-held-out validation. Codex inspected the six PNG figures
+independently of Claude. The project lead should review venue-specific table layout before submission.
 
 ## 6. Discussion
 
@@ -121,7 +123,7 @@ lead should review them before submission.
 ## 7. Limitations
 
 Undocumented label; app-collected self-selected sample; no participant identifiers; no
-independent diagnoses or external validation; inferred item encoding; same-machine
+independently documented diagnoses or clinical external validation; inferred item encoding; same-machine
 reproduction only; single dataset family; subgroup sizes too small for performance
 comparisons (only White-European has 30 or more positives); no systematic literature search.
 
