@@ -1,0 +1,9 @@
+Quantity,Correct,n,Estimate,Method,Lower,Upper,Conditional on,Status
+"Serving logistic model, original 141-row holdout",141,141,1.0,Clopper-Pearson,0.9741770013361344,1.0,the fitted model (or rule) and independent test rows,acceptable if rows are independent
+"Rule total >= 7, original holdout",141,141,1.0,Clopper-Pearson,0.9741770013361344,1.0,the fitted model (or rule) and independent test rows,acceptable if rows are independent
+"Rule total >= 6, original holdout",129,141,0.9148936170212766,Clopper-Pearson,0.8560554152511083,0.9552495575373724,the fitted model (or rule) and independent test rows,acceptable if rows are independent
+"Documented rule total >= 6, all 704 rows",634,704,0.9005681818181818,Clopper-Pearson,0.8760457503453132,0.921666353236146,a rule fixed before looking at the data and independent rows,acceptable if rows are independent
+"Documented rule total >= 6, all 704 rows",634,704,0.9005681818181818,Wilson,0.8762428266524945,0.9205457662898536,a rule fixed before looking at the data and independent rows,acceptable if rows are independent
+"Rule total >= 7 (found after looking at these labels), all 704 rows",704,704,1.0,count only,,,this file,descriptive fact: 0 disagreements; not an estimate of future agreement
+"Upper bound on disagreement rate for rule >= 7 (two-sided 95%, single pre-specified rule)",704,704,0.0,"exact, zero errors",0.0,0.00522618133443,independent rows from the same labeling process,conditional; not clinical accuracy
+"Upper bound on disagreement rate for rule >= 7 (one-sided 95%, adjusted for 12 scanned cut-offs)",704,704,0.0,"exact, zero errors",0.0,0.0077547738537844,independent rows from the same labeling process,conditional; not clinical accuracy

@@ -1,0 +1,192 @@
+{
+  "question": "Do models outperform a score rule in reproducing adult screening labels, and how does performance change without score information?",
+  "seeds": [
+    42,
+    137,
+    2026
+  ],
+  "folds": 5,
+  "bootstrap_draws": 1000,
+  "bootstrap_seed": 9102,
+  "feature_sets": {
+    "combined_with_sum": [
+      [
+        "A1_Score",
+        "A2_Score",
+        "A3_Score",
+        "A4_Score",
+        "A5_Score",
+        "A6_Score",
+        "A7_Score",
+        "A8_Score",
+        "A9_Score",
+        "A10_Score",
+        "age",
+        "sum_score"
+      ],
+      [
+        "gender",
+        "ethnicity",
+        "jaundice",
+        "country_of_res",
+        "relation"
+      ]
+    ],
+    "combined_without_sum": [
+      [
+        "A1_Score",
+        "A2_Score",
+        "A3_Score",
+        "A4_Score",
+        "A5_Score",
+        "A6_Score",
+        "A7_Score",
+        "A8_Score",
+        "A9_Score",
+        "A10_Score",
+        "age"
+      ],
+      [
+        "gender",
+        "ethnicity",
+        "jaundice",
+        "country_of_res",
+        "relation"
+      ]
+    ],
+    "questionnaire_only": [
+      [
+        "A1_Score",
+        "A2_Score",
+        "A3_Score",
+        "A4_Score",
+        "A5_Score",
+        "A6_Score",
+        "A7_Score",
+        "A8_Score",
+        "A9_Score",
+        "A10_Score"
+      ],
+      []
+    ],
+    "non_questionnaire": [
+      [
+        "age"
+      ],
+      [
+        "gender",
+        "ethnicity",
+        "jaundice",
+        "country_of_res",
+        "relation"
+      ]
+    ]
+  },
+  "aq_rules": {
+    "aq_ge6": "ARC adult AQ-10 referral threshold",
+    "aq_ge7": "Empirically observed local label reconstruction rule"
+  },
+  "model_parameters": {
+    "logistic": {
+      "C": 1.0,
+      "class_weight": null,
+      "dual": false,
+      "fit_intercept": true,
+      "intercept_scaling": 1,
+      "l1_ratio": 0.0,
+      "max_iter": 1000,
+      "n_jobs": null,
+      "penalty": "deprecated",
+      "random_state": 42,
+      "solver": "lbfgs",
+      "tol": 0.0001,
+      "verbose": 0,
+      "warm_start": false
+    },
+    "tree": {
+      "ccp_alpha": 0.0,
+      "class_weight": null,
+      "criterion": "gini",
+      "max_depth": 4,
+      "max_features": null,
+      "max_leaf_nodes": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 10,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "random_state": 42,
+      "splitter": "best"
+    },
+    "forest": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "class_weight": null,
+      "criterion": "gini",
+      "max_depth": null,
+      "max_features": "sqrt",
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 5,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 100,
+      "n_jobs": 1,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    }
+  },
+  "oversampler": "RandomOverSampler inside each training fold; random_state equals split seed",
+  "split": "StratifiedGroupKFold; identical app predictors grouped; same folds for every method",
+  "scoring_threshold": 0.5,
+  "precision_zero_division": 0,
+  "explanatory_analyses": {
+    "score_thresholds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "tree_depths": [
+      1,
+      2,
+      3,
+      4,
+      6,
+      8,
+      10,
+      null
+    ],
+    "tree_feature_sets": [
+      "questionnaire_only",
+      "combined_with_sum"
+    ],
+    "tree_min_samples_leaf": 10,
+    "coefficients": "Questionnaire-only logistic; training-fold fits; standardized and raw binary-item units",
+    "interpretation": "Descriptive threshold scan and depth comparison; no model or clinical threshold selected from validation results"
+  },
+  "sensitivity": "Retain ages 18-100 inclusive and first record per identical predictor group",
+  "uncertainty": "Repeat/fold SD plus 95% group percentile bootstrap conditional on first-seed OOF predictions; no retraining in bootstrap; ROC-AUC repeat/fold SD only",
+  "dataset_sha256": "657021cddb337358640470cea758b72087bc4519e1234f7bc59c2b0160a0060d",
+  "code_sha256": "b3533d30a8d8fae55b8b6fb52716a05608410ba430059f6d0a060cb1ac24b7d2",
+  "train_code_sha256": "211ff4d97dea116cede6bc087345db78b6aff063a74875f35300aae1c7ddcd6a",
+  "versions": {
+    "python": "3.14.5",
+    "numpy": "2.4.3",
+    "pandas": "3.0.1",
+    "sklearn": "1.8.0",
+    "imblearn": "0.14.1"
+  }
+}

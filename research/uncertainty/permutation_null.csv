@@ -1,0 +1,2 @@
+method,observed_auc_mean_over_repeats,null_draws,null_mean,null_95th_percentile,null_max,p_value_at_least_observed,note
+logistic/non_questionnaire,0.740501018818171,200,0.4966608876560333,0.5511183027687881,0.5788051574459342,0.004975124378109453,"labels shuffled over all rows; tests for any label signal, not for causes of it"
