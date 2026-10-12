@@ -1,0 +1,4 @@
+# Keep the dataset and source archives byte-exact so recorded checksums hold in any clone,
+# whatever the local line-ending settings (core.autocrlf).
+data/train.csv -text
+research/sources/*.zip binary
