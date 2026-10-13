@@ -42,7 +42,7 @@ associations. Mark every statement as **Confirmed**, **Supported inference**, or
 
 | Holder | Since | Files |
 |---|---|---|
-| Codex | 2026-10-12; final publication | Focused independent re-check complete. Recording evidence and publishing UI-only branch/PR; no source fixes remaining. |
+| none | released 2026-10-12 21:53 EDT | UI implementation reviewed, committed and pushed; PR #2 open. No further shared edits by Codex unless CI identifies a fix. |
 
 ## 3. Snapshot under verification
 
@@ -76,7 +76,7 @@ research `1:368`, mobile `1:369`; all accessed via design context and screenshot
 | U3 | Research wording and versioned committed evidence | DONE-VERIFIED (UI integration) | Claude checked adapter/version/hash guard, original figures and live/example separation. Core research scientific review X14 remains open; this UI review does not replace it. |
 | U4 | Accessibility, responsive browser checks and automated tests | DONE-VERIFIED within test scope | Codex60 pytest/10 browser; Claude28 final UI/API pytest/10 browser/readiness exit0. 1200/390/320px, keyboard/focus/errors/loading/safe rendering. Not screen-reader/real-device certification. |
 | U5 | Claude independent UI review | DONE-VERIFIED | CLI2.1.119/modelclaude-sonnet-4-6: initial57 pytest/8 browser pass; focused re-check28 pytest (2.37s)/10 browser (14.6s)/readiness exit0, no residual findings. Review/re-check preserved in docs/ui; captured-reference limits explicit. |
-| U6 | Address findings, commit/push UI branch and open PR | IN-PROGRESS | Findings triaged/fixed and independently rechecked; final diff/publication against research/label-circularity. Merge left to lead. |
+| U6 | Address findings, commit/push UI branch and open PR | DONE | `codex/figma-ui`, implementation commit0124f13; PR #2 https://github.com/EvansCortez/autism-screening-ai/pull/2 against research/label-circularity. 38 UI/integration files only, screenshots/Figma/reviews/checks/limits included. Merge left to lead. UI Verification run38334102467 started; remote outcome reported on PR separately. |
 
 #### Claude UI Review Findings (2026-10-12)
 
@@ -212,6 +212,19 @@ Source: `REVIEW.md` F6, checked against two papers read in full (Bengio and Gran
   Do not claim novelty; Bone et al. (2015) already argued the concept for ADOS and ADI-R.
 
 ## 8. Handoff log (newest first)
+
+### 2026-10-12 21:53 Codex UI Publication Handoff (Lock Released)
+
+- UI PR #2 is open, unmerged and mergeable, targeting research/label-circularity. Code commit
+  0124f13 is pushed; the following documentation-only commit records this handoff.
+- Independent review/re-check complete with no residual actionable findings; local full suite60
+  and browser10 pass. Research/model files equal ace0186. Source/version and screenshots are in PR.
+- GitHub UI Verification workflow started on the implementation commit; remote outcome will be
+  updated on the PR, not assumed from local results. Docker/real-device/AT checks remain limits.
+- **Lead next:** review/decide research PR#1 first. If merged, retarget UI PR#2 to main and
+  inspect the remaining UI diff before merging; do not accidentally merge UI into the open
+  research branch and combine scopes. No automatic merge/rebase was performed.
+- X14 remains the independent scientific review of research corrections, not this UI review.
 
 ### 2026-10-12 Final UI Review And Publication Preparation
 
