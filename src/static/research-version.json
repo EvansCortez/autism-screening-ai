@@ -1,0 +1,15 @@
+{
+  "commit": "ace0186c2ee3c6a8f40d0b20803acc0a59be84c7",
+  "files": {
+    "research/evaluation/pooled_metrics.csv": "c54db63d08b17dcdb48edc0b0df335b58790e34cf8d2333a495649c7e3ebc398",
+    "research/evaluation/settings.json": "b3f74f6b8a77a63c070a46940349c3d1841379bc27d20226486969ed8066d830",
+    "research/evaluation/audit.json": "486a408b64dc5d80bef7fcc57b67efdbc032f0a2c63039e920442843fc85ed25",
+    "research/uncertainty/leave_country_out_metrics.csv": "7a34eb2f41d7e059fcf11607b9c41efa6687c8d0999b8d2bd645d54405f2f0d5",
+    "research/report/figures/fig1_label_by_score.png": "1ae47c62d30799fd79ac0ac3a4606fe31b8e787da52a2eda01fe4d5e9eda20ff",
+    "research/report/figures/fig2_threshold_scan.png": "7e9df36879aafd53394fa5c5481ca4855553a9cbdbd3fcd58bee48fac100b5e9",
+    "research/report/figures/fig3_accuracy_by_features.png": "b2acfaf6072a05e8d3f19c7983679364e8f4d5961b706befaa11195d8b682f76",
+    "research/report/figures/fig4_item_weights.png": "171670961a1816034aea78e0c83b65e6580403b819eca89be8547f50482d8282",
+    "research/report/figures/fig5_tree_depth.png": "746c6cbf22160ee83372d3ba88009605725c8d1e53746b61905e5834278dac06",
+    "research/report/figures/fig6_residual_signal.png": "3b0200edc9c19d9855bd13da5a1684f3462ac6dd39739be8227aaf40341142fe"
+  }
+}

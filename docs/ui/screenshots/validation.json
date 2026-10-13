@@ -1,0 +1,12 @@
+{
+  "browser": "155.0.8059.40",
+  "playwright": "1.62.1",
+  "font": "@fontsource/libre-baskerville 5.3.0 (self-hosted)",
+  "desktop": 1200,
+  "mobileWidths": [
+    390,
+    320
+  ],
+  "evidenceCommit": "ace0186c2ee3c6a8f40d0b20803acc0a59be84c7",
+  "scope": "Synthetic fictional inputs; Chromium checks are not screen-reader or real-device certification."
+}

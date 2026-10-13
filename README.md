@@ -78,8 +78,13 @@ and `POST /screening-report`. Reports accept `subject_name`, adult profile field
 ten already-scored binary AQ items, observation notes, and follow-up fields.
 
 The questionnaire columns are keyed scores, not generic yes/no answers.
-The report's keyword flags, risk bands, and probability wording are unvalidated
-demonstration behavior. Observation notes do not change the trained classifier.
+The Figma UI presents dataset-label predictions, not clinical risk. Response aliases
+`probability`, `risk_band`, and `clinical_impression` remain for compatibility, with
+research-appropriate explanation text. Observation notes do not change the classifier.
+The API accepts finite adult ages >=18 and pre-scored JSON integers 0/1. The new
+`GET /research-evidence` and allowlisted figure routes expose hash-verified research
+outputs pinned to `ace0186`, separate from live results. See [UI implementation and
+browser checks](docs/ui/README.md) for layouts, screenshots, validation changes and limits.
 
 ## Legacy serving-model training
 

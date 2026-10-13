@@ -1,0 +1,49 @@
+name: UI Verification
+
+on:
+  pull_request:
+    branches: [main, research/label-circularity]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'ui-tests/**'
+      - '.github/workflows/ui.yml'
+      - 'requirements*'
+      - '.python-version'
+  workflow_dispatch:
+
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version-file: '.python-version'
+          cache: pip
+          cache-dependency-path: requirements.lock
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: ui-tests/package-lock.json
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: npm ci --prefix ui-tests --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+        working-directory: ui-tests
+      - name: Start local app
+        run: python -m uvicorn src.main:app --host 127.0.0.1 --port 8787 > /tmp/asd-ui-server.log 2>&1 &
+      - name: Wait for app and saved model
+        run: python ui-tests/wait_for_server.py
+      - run: npm --prefix ui-tests test
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ui-screenshots
+          path: docs/ui/screenshots/
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ui-server-log
+          path: /tmp/asd-ui-server.log

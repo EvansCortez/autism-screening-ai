@@ -4,7 +4,10 @@ import joblib
 import pandas as pd
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, ConfigDict, Field
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel, ConfigDict, Field, field_validator
+
+from src.research_evidence import FIGURES, evidence_payload, verified_manifest
 
 ROOT_DIR = Path(__file__).resolve().parents[1]
 MODEL_PATH = ROOT_DIR / "models" / "autism_model.pkl"
@@ -48,6 +51,7 @@ BEHAVIOR_KEYWORDS = {
 
 class ScreeningData(BaseModel):
     model_config = ConfigDict(
+        allow_inf_nan=False,
         json_schema_extra={
             "example": {
                 "A1_Score": 1,
@@ -70,22 +74,29 @@ class ScreeningData(BaseModel):
         }
     )
 
-    A1_Score: int = Field(ge=0, le=1)
-    A2_Score: int = Field(ge=0, le=1)
-    A3_Score: int = Field(ge=0, le=1)
-    A4_Score: int = Field(ge=0, le=1)
-    A5_Score: int = Field(ge=0, le=1)
-    A6_Score: int = Field(ge=0, le=1)
-    A7_Score: int = Field(ge=0, le=1)
-    A8_Score: int = Field(ge=0, le=1)
-    A9_Score: int = Field(ge=0, le=1)
-    A10_Score: int = Field(ge=0, le=1)
-    age: float = Field(gt=0)
+    A1_Score: int = Field(strict=True, ge=0, le=1)
+    A2_Score: int = Field(strict=True, ge=0, le=1)
+    A3_Score: int = Field(strict=True, ge=0, le=1)
+    A4_Score: int = Field(strict=True, ge=0, le=1)
+    A5_Score: int = Field(strict=True, ge=0, le=1)
+    A6_Score: int = Field(strict=True, ge=0, le=1)
+    A7_Score: int = Field(strict=True, ge=0, le=1)
+    A8_Score: int = Field(strict=True, ge=0, le=1)
+    A9_Score: int = Field(strict=True, ge=0, le=1)
+    A10_Score: int = Field(strict=True, ge=0, le=1)
+    age: float = Field(strict=True, ge=18)
     gender: str
     ethnicity: str
     jaundice: str
     country_of_res: str
     relation: str
+
+    @field_validator("gender", "ethnicity", "jaundice", "country_of_res", "relation")
+    @classmethod
+    def nonblank_category(cls, value):
+        if not value.strip():
+            raise ValueError("Enter a nonblank dataset category")
+        return value.strip()
 
 
 class ScreeningReportRequest(ScreeningData):
@@ -102,6 +113,7 @@ class ScreeningReportRequest(ScreeningData):
 
 
 app = FastAPI(title="ASD Screening API", version="1.0.0")
+app.mount("/static", StaticFiles(directory=WEB_PATH.parent), name="static")
 
 model = joblib.load(MODEL_PATH) if MODEL_PATH.exists() else None
 
@@ -123,6 +135,25 @@ def health():
     return {"model_loaded": model is not None}
 
 
+@app.get("/research-evidence")
+def research_evidence():
+    try:
+        return evidence_payload()
+    except (OSError, ValueError, KeyError) as error:
+        raise HTTPException(status_code=503, detail="Pinned research evidence is unavailable. Live demo predictions are separate.") from error
+
+
+@app.get("/research-figures/{filename}")
+def research_figure(filename: str):
+    if filename.removesuffix(".png") not in FIGURES or not filename.endswith(".png"):
+        raise HTTPException(status_code=404, detail="Research figure not found")
+    try:
+        verified_manifest()
+    except (OSError, ValueError, KeyError) as error:
+        raise HTTPException(status_code=503, detail="Pinned research evidence is unavailable") from error
+    return FileResponse(ROOT_DIR / "research/report/figures" / filename)
+
+
 @app.post("/predict")
 def predict_asd(data: ScreeningData):
     if model is None:
@@ -138,7 +169,11 @@ def predict_asd(data: ScreeningData):
         "probability": round(probability, 4),
         "sum_score": payload["sum_score"],
         "risk_band": risk_band(probability),
-        "disclaimer": "This is a screening result, not a clinical diagnosis.",
+        "dataset_label": "YES" if prediction else "NO",
+        "observed_rule_label": "YES" if payload["sum_score"] >= 7 else "NO",
+        "model_label_score": round(probability, 4),
+        "interpretation": "Uncalibrated class-YES model score; not a clinical probability of autism. Legacy probability and risk_band keys are retained for compatibility only.",
+        "disclaimer": "Educational adult dataset-label demo. Not clinical diagnostic accuracy or a diagnosis.",
     }
 
 
@@ -177,8 +212,13 @@ def screening_report(data: ScreeningReportRequest):
             "probability": round(probability, 4),
             "risk_band": risk,
             "sum_score": payload["sum_score"],
+            "dataset_label": "YES" if prediction else "NO",
+            "observed_rule_label": "YES" if payload["sum_score"] >= 7 else "NO",
+            "model_label_score": round(probability, 4),
+            "interpretation": "Uncalibrated class-YES model score; not a clinical probability. Legacy risk_band is not a clinically validated risk category.",
         },
         "report": {
+            "research_explanation": "The saved model predicts the dataset's YES/NO screening labels; research metrics measure agreement with those labels. The observed >=7 score rule reconstructs those labels in the adult file; it differs from the documented >=6 referral-consideration rule. Neither establishes a diagnosis. Supplied notes do not enter this model.",
             "clinical_impression": build_clinical_impression(
                 data.subject_name,
                 probability,
@@ -193,7 +233,7 @@ def screening_report(data: ScreeningReportRequest):
             "transcript_excerpt": data.transcript_excerpt or "None provided.",
             "recommended_next_steps": next_steps,
         },
-        "disclaimer": "This report is a screening support summary and not a clinical diagnosis.",
+        "disclaimer": "Educational adult dataset-label summary, not a clinical diagnosis or a clinical probability of autism.",
     }
 
     return report
@@ -236,21 +276,13 @@ def summarize_aq(payload: dict) -> dict:
 
 
 def build_next_steps(probability: float, domain_flags: dict, high_response_count: int) -> list[str]:
-    steps = []
-    if probability >= 0.8 or high_response_count >= 7:
-        steps.append("Recommend follow-up with a qualified clinician or specialist for formal evaluation.")
-        steps.append("Complete a structured follow-up interview or secondary screening workflow before closing the case.")
-    else:
-        steps.append("Review the screening summary with a clinician and monitor concerns over time.")
-        steps.append("If concerns persist despite a lower-risk screen, repeat screening and document new examples.")
-
-    if any(domain_flags.values()):
-        steps.append("Bring the noted social, communication, and behavioral observations to the next clinical visit.")
-    else:
-        steps.append("Gather a few concrete observation examples across home or school settings before the next visit.")
-
-    steps.append("Use this result as a triage aid only; do not treat it as a diagnosis.")
-    return steps
+    # Preserve the helper signature, but do not derive healthcare recommendations from this model.
+    return [
+        "Compare the predicted dataset label with the observed >=7 score rule.",
+        "Read the committed research methods, provenance and uncertainty limitations.",
+        "Treat supplied notes and workflow fields as unvalidated context, not diagnostic evidence.",
+        "Do not use this model output to make healthcare decisions.",
+    ]
 
 
 def summarize_follow_up(
@@ -275,11 +307,10 @@ def build_clinical_impression(
     high_response_count: int,
     domain_flags: dict,
 ) -> str:
-    flagged_domains = [name.replace("_", " ") for name, hits in domain_flags.items() if hits]
-    domain_text = ", ".join(flagged_domains) if flagged_domains else "no additional note-derived domains"
+    # Legacy response key/helper retained; this text is a research explanation, not an impression.
     return (
-        f"{subject_name}'s screening profile falls in the {risk} risk range with an estimated model "
-        f"probability of {probability:.2%}. The AQ-style intake contains {high_response_count} positive "
-        f"responses out of 10, and the documented notes suggest {domain_text}. This summary is intended "
-        f"to support screening follow-up and clinician review for the current adult AQ-10 demo."
+        f"{subject_name}'s adult AQ-10 demo contains {high_response_count} pre-scored item points out of 10. "
+        f"The class-YES model score is {probability:.4f}; it is uncalibrated and is not a clinical "
+        "probability of autism. The model was trained to reproduce dataset screening labels. "
+        "Notes are supplied context only and do not establish diagnostic findings."
     )

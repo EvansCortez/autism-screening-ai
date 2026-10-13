@@ -1,0 +1,11 @@
+{
+  "name": "asd-predict-ui-checks",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test browser.test.cjs",
+    "install-browser": "playwright install chromium"
+  },
+  "engines": { "node": ">=20" },
+  "devDependencies": { "playwright": "1.62.1", "@fontsource/libre-baskerville": "5.3.0" }
+}

@@ -68,7 +68,32 @@ Run results, visual inspection and the next independent-review handoff are recor
 Codex's fixes are not themselves independently verified by Claude merely because Codex reviewed
 Claude's earlier implementation. The project lead retains final interpretation and merge authority.
 
-## Project lead decisions (to be completed by the project lead)
+## UI Implementation And Independent Review (2026-10-12)
+
+The project lead authorized implementing the ASD-Predict Figma file in the existing
+HTML/CSS/JavaScript/FastAPI stack on a separate branch, with research-appropriate wording,
+working API requests, safe rendering, versioned evidence, responsive accessibility,
+Claude independent review, tests/screenshots and a PR without merging.
+
+Codex read the Figma design context and screenshots for five frames, selected a stacked
+`codex/figma-ui` branch because research PR#1 remained open, implemented the native UI,
+read-only hash-verified evidence adapter and validation fixes, self-hosted the licensed
+font, and authored tests/docs. Experiments and the saved model were not changed.
+Intentional design adaptations and limits are in `docs/ui/README.md`.
+
+Claude Code CLI2.1.119, runtime model `claude-sonnet-4-6` (from actual CLI result), performed
+a fresh independent review, not a continuation of the earlier desktop conversation.
+Its source-edit tools were disabled and Codex paused edits during both runs. It inspected
+captured Figma renders, not live Figma MCP. It independently passed57 Python/8 browser checks
+initially, then28 UI/API Python/10 browser/readiness checks after fixes. Actual outputs are
+preserved in `docs/ui/CLAUDE_REVIEW.md` and `CLAUDE_RECHECK.md`; findings and decisions are
+logged in TASKS. The first extra coercion probe was denied by the restricted tool allowlist;
+Codex subsequently confirmed the finding and tested the fix. Two visual claims were corrected
+against Figma capture/metadata rather than accepted blindly. No user billing/session metadata
+is published. Remote CI status is separate; no claim of real-device, screen-reader, Docker or
+clinical validation follows from these checks.
+
+## Project Lead Account (Still To Be Completed By The Lead)
 
 Record, in your own words: the research question and who proposed it; the instruction to treat
 results as screening-label agreement only; decisions on dataset choice; what you verified

@@ -8,6 +8,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY src/ src/
 COPY data/ data/
 COPY models/ models/
+COPY research/evaluation/pooled_metrics.csv research/evaluation/settings.json research/evaluation/audit.json research/evaluation/
+COPY research/uncertainty/leave_country_out_metrics.csv research/uncertainty/
+COPY research/report/figures/ research/report/figures/
 
 EXPOSE 8000
 
