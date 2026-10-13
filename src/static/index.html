@@ -1,795 +1,138 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Autism Screening Assistant Demo</title>
-  <style>
-    :root {
-      --bg: #f4efe7;
-      --panel: rgba(255, 251, 245, 0.84);
-      --panel-strong: #fffaf2;
-      --text: #24323c;
-      --muted: #65727e;
-      --line: rgba(69, 86, 99, 0.18);
-      --accent: #0f766e;
-      --accent-strong: #0b5e57;
-      --high: #b54708;
-      --moderate: #b76e00;
-      --low: #18794e;
-      --shadow: 0 24px 60px rgba(43, 52, 59, 0.12);
-    }
-
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      font-family: Georgia, "Times New Roman", serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 30%),
-        radial-gradient(circle at top right, rgba(214, 140, 69, 0.12), transparent 28%),
-        linear-gradient(180deg, #f7f1e8 0%, #efe4d6 100%);
-    }
-
-    .shell {
-      max-width: 1180px;
-      margin: 0 auto;
-      padding: 28px 18px 56px;
-    }
-
-    .hero {
-      padding: 28px;
-      border: 1px solid var(--line);
-      border-radius: 28px;
-      background: linear-gradient(135deg, rgba(255, 250, 242, 0.94), rgba(242, 250, 248, 0.88));
-      box-shadow: var(--shadow);
-      margin-bottom: 20px;
-    }
-
-    .eyebrow {
-      display: inline-block;
-      font-size: 0.78rem;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 14px;
-    }
-
-    h1, h2, h3 {
-      margin: 0;
-      font-weight: 600;
-    }
-
-    h1 {
-      font-size: clamp(2.3rem, 4vw, 4rem);
-      line-height: 0.95;
-      max-width: 10ch;
-    }
-
-    .hero-copy {
-      margin-top: 16px;
-      max-width: 70ch;
-      color: var(--muted);
-      font-size: 1.03rem;
-    }
-
-    .hero-grid {
-      display: grid;
-      grid-template-columns: 1.2fr 0.8fr;
-      gap: 18px;
-      margin-top: 22px;
-    }
-
-    .hero-note,
-    .score-preview,
-    .panel {
-      border: 1px solid var(--line);
-      border-radius: 22px;
-      background: var(--panel);
-      backdrop-filter: blur(10px);
-    }
-
-    .hero-note {
-      padding: 18px;
-    }
-
-    .hero-note p,
-    .panel p,
-    .score-preview p {
-      margin: 0;
-      color: var(--muted);
-    }
-
-    .score-preview {
-      padding: 18px;
-      display: grid;
-      gap: 10px;
-      align-content: space-between;
-    }
-
-    .score-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      width: fit-content;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(15, 118, 110, 0.1);
-      color: var(--accent-strong);
-      font-size: 0.86rem;
-      font-weight: 600;
-    }
-
-    .layout {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .panel {
-      padding: 22px;
-      box-shadow: var(--shadow);
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: end;
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .section-head span {
-      color: var(--muted);
-      font-size: 0.92rem;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 14px;
-    }
-
-    .aq-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 12px;
-      margin-top: 12px;
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      font-size: 0.92rem;
-      color: var(--muted);
-    }
-
-    input,
-    select,
-    textarea,
-    button {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      padding: 12px 14px;
-      font: inherit;
-      color: var(--text);
-      background: rgba(255, 255, 255, 0.62);
-    }
-
-    textarea {
-      min-height: 116px;
-      resize: vertical;
-      line-height: 1.5;
-    }
-
-    .aq-card {
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.54);
-    }
-
-    .aq-card strong {
-      display: block;
-      margin-bottom: 6px;
-      color: var(--text);
-    }
-
-    .behaviors {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .behavior-pill {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 16px;
-      background: rgba(255, 255, 255, 0.58);
-      color: var(--text);
-    }
-
-    .behavior-pill input {
-      width: auto;
-      margin: 0;
-    }
-
-    .actions {
-      display: flex;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    button {
-      cursor: pointer;
-      border: none;
-      background: var(--accent);
-      color: #f8fffd;
-      font-weight: 600;
-      transition: transform 160ms ease, background 160ms ease;
-    }
-
-    button:hover {
-      transform: translateY(-1px);
-      background: var(--accent-strong);
-    }
-
-    button.secondary {
-      background: rgba(36, 50, 60, 0.08);
-      color: var(--text);
-      border: 1px solid var(--line);
-    }
-
-    .report-shell {
-      display: grid;
-      gap: 16px;
-    }
-
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 999px;
-      width: fit-content;
-      font-size: 0.86rem;
-      font-weight: 600;
-      background: rgba(36, 50, 60, 0.08);
-      color: var(--muted);
-    }
-
-    .risk-banner {
-      padding: 18px;
-      border-radius: 24px;
-      border: 1px solid var(--line);
-      background: var(--panel-strong);
-    }
-
-    .risk-banner.high { border-color: rgba(181, 71, 8, 0.24); }
-    .risk-banner.moderate { border-color: rgba(183, 110, 0, 0.24); }
-    .risk-banner.low { border-color: rgba(24, 121, 78, 0.24); }
-
-    .risk-top {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .risk-level {
-      font-size: 1.8rem;
-      text-transform: capitalize;
-    }
-
-    .risk-level.high { color: var(--high); }
-    .risk-level.moderate { color: var(--moderate); }
-    .risk-level.low { color: var(--low); }
-
-    .metric-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .metric {
-      padding: 14px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.54);
-      border: 1px solid var(--line);
-    }
-
-    .metric span {
-      display: block;
-      color: var(--muted);
-      font-size: 0.82rem;
-      margin-bottom: 6px;
-    }
-
-    .metric strong {
-      font-size: 1.2rem;
-    }
-
-    .report-card {
-      padding: 18px;
-      border-radius: 22px;
-      border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.58);
-    }
-
-    .report-card h3 {
-      margin-bottom: 10px;
-      font-size: 1.05rem;
-    }
-
-    .tag-list,
-    .step-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-
-    .tag {
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(15, 118, 110, 0.1);
-      color: var(--accent-strong);
-      font-size: 0.84rem;
-    }
-
-    .step-list {
-      flex-direction: column;
-    }
-
-    .step {
-      padding: 12px 14px;
-      border-radius: 16px;
-      background: rgba(36, 50, 60, 0.05);
-    }
-
-    .mono {
-      white-space: pre-wrap;
-      font-family: "SFMono-Regular", Consolas, monospace;
-      font-size: 0.84rem;
-    }
-
-    .empty-state {
-      padding: 30px 20px;
-      text-align: center;
-      color: var(--muted);
-      border: 1px dashed var(--line);
-      border-radius: 24px;
-      background: rgba(255, 255, 255, 0.42);
-    }
-
-    @media (max-width: 980px) {
-      .hero-grid,
-      .layout {
-        grid-template-columns: 1fr;
-      }
-
-      .aq-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-    }
-
-    @media (max-width: 720px) {
-      .form-grid,
-      .metric-grid,
-      .behaviors,
-      .actions {
-        grid-template-columns: 1fr;
-        flex-direction: column;
-      }
-
-      h1 {
-        max-width: 100%;
-      }
-    }
-  </style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="An educational adult autism screening-data research prototype, not a diagnostic tool.">
+  <title>ASD-Predict | Adult Screening Data Research</title>
+  <link rel="stylesheet" href="/static/styles.css">
+  <script src="/static/app.js" defer></script>
 </head>
 <body>
-  <main class="shell">
-    <section class="hero">
-      <span class="eyebrow">Adult AQ-10 Demo</span>
-      <h1>Autism Screening Assistant Demo</h1>
-      <p class="hero-copy">
-        This prototype turns adult AQ-10 questionnaire responses, supporting notes, and workflow fields into a risk estimate and a clinician-facing summary. It is built for screening support, not diagnosis.
-      </p>
-      <div class="hero-grid">
-        <article class="hero-note">
-          <h2>How teams could use this</h2>
-          <p>
-            A respondent or intake staff member completes the AQ-style form, documents relevant observations, adds short notes, and generates a structured report for clinical follow-up.
-          </p>
-        </article>
-        <aside class="score-preview">
-          <span class="score-chip">Startup MVP direction</span>
-          <p>
-            Start with an honest adult screening workflow demo, then layer on richer multimodal AI only after collecting the right data and review loops.
-          </p>
-        </aside>
-      </div>
-    </section>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="shell">
+    <header class="site-header">
+      <a class="brand" href="#welcome" aria-label="ASD-Predict home">ASD-PREDICT</a>
+      <nav aria-label="Main navigation">
+        <a href="#intake">Demo</a>
+        <a href="#research">Research</a>
+        <a href="#about">About the project</a>
+      </nav>
+    </header>
+    <p id="app-status" class="status" role="status" aria-live="polite" aria-atomic="true"></p>
+    <main id="main" tabindex="-1">
+      <noscript><p class="scope">JavaScript is required for the interactive demo. The <a href="/docs">API documentation</a> remains available.</p></noscript>
 
-    <section class="layout">
-      <form id="screening-form" class="panel">
-        <div class="section-head">
-          <div>
-            <h2>Intake Form</h2>
-            <span>Collect an adult AQ-10 screening summary plus workflow notes.</span>
-          </div>
+      <section class="view welcome" data-view="welcome" aria-labelledby="welcome-title">
+        <div class="welcome-hero">
+          <p class="eyebrow">AUTISM + ARTIFICIAL INTELLIGENCE</p>
+          <h1 id="welcome-title" tabindex="-1">Understand the data.<br>Explore the research.</h1>
+          <p class="welcome-copy">A transparent undergraduate research project exploring what machine learning learns from adult autism screening questionnaires.</p>
+          <p class="accent strong">Educational prototype &middot; Adult dataset &middot; No clinical diagnosis</p>
         </div>
-
-        <div class="form-grid">
-          <label>Participant Name
-            <input type="text" id="subject_name" value="Sample Participant" required />
-          </label>
-          <label>Respondent Name
-            <input type="text" id="screener_name" value="Self-report" required />
-          </label>
-          <label>Context
-            <input type="text" id="context" value="Adult self-report screening" required />
-          </label>
-          <label>Age
-            <input type="number" id="age" min="1" step="1" value="27" required />
-          </label>
-          <label>Gender
-            <select id="gender" required>
-              <option value="m">m</option>
-              <option value="f">f</option>
-              <option value="other">other</option>
-            </select>
-          </label>
-          <label>Ethnicity
-            <input type="text" id="ethnicity" value="Latino" required />
-          </label>
-          <label>Jaundice
-            <select id="jaundice" required>
-              <option value="no">no</option>
-              <option value="yes">yes</option>
-            </select>
-          </label>
-          <label>Country of Residence
-            <input type="text" id="country_of_res" value="United States" required />
-          </label>
-          <label>Relation
-            <input type="text" id="relation" value="Self" required />
-          </label>
-          <label>Prior Screening Status
-            <select id="prior_screening_status" required>
-              <option value="No prior screening documented">No prior screening documented</option>
-              <option value="Prior screening completed with no major concerns">Prior screening completed with no major concerns</option>
-              <option value="Prior screening flagged developmental concerns">Prior screening flagged developmental concerns</option>
-            </select>
-          </label>
-          <label>Referral Status
-            <select id="referral_status" required>
-              <option value="No referral started">No referral started</option>
-              <option value="Referral pending clinician review">Referral pending clinician review</option>
-              <option value="Referral submitted to specialist">Referral submitted to specialist</option>
-            </select>
-          </label>
+        <h2>Choose your starting point</h2>
+        <div class="paths">
+          <article class="panel path"><h3>Explore the demo</h3><p>Use fictional participant details and pre-scored AQ items to explore the existing workflow.</p><a href="#intake">Open the demo <span aria-hidden="true">&rarr;</span></a></article>
+          <article class="panel path"><h3>Understand the findings</h3><p>Compare machine learning with simple scoring rules, and see why high accuracy needs context.</p><a href="#research">View research evidence <span aria-hidden="true">&rarr;</span></a></article>
+          <article class="panel path"><h3>Learn about the project</h3><p>Read the methods, limitations, data sources, and how the experiments can be reproduced.</p><a href="#about">Read the methods <span aria-hidden="true">&rarr;</span></a></article>
         </div>
-
-        <div class="section-head" style="margin-top: 24px;">
-          <div>
-            <h2>AQ Intake</h2>
-            <span>Binary answers used by the current model prototype.</span>
-          </div>
-        </div>
-        <div id="aq-fields" class="aq-grid"></div>
-
-        <div class="section-head" style="margin-top: 24px;">
-          <div>
-            <h2>Observed Behaviors</h2>
-            <span>Quick tags to enrich the generated report narrative.</span>
-          </div>
-        </div>
-        <div class="behaviors">
-          <label class="behavior-pill"><input type="checkbox" value="limited eye contact" />Limited eye contact</label>
-          <label class="behavior-pill"><input type="checkbox" value="conversation difficulty" />Conversation difficulty</label>
-          <label class="behavior-pill"><input type="checkbox" value="stimming behaviors" />Stimming behaviors</label>
-          <label class="behavior-pill"><input type="checkbox" value="difficulty with turn taking" />Difficulty with turn taking</label>
-          <label class="behavior-pill"><input type="checkbox" value="rigid routines" />Rigid routines</label>
-          <label class="behavior-pill"><input type="checkbox" value="sensory sensitivity" />Sensory sensitivity</label>
-        </div>
-
-        <div class="section-head" style="margin-top: 24px;">
-          <div>
-            <h2>Notes</h2>
-            <span>These fields simulate the transcript and observation-note layer.</span>
-          </div>
-        </div>
-        <div class="form-grid">
-          <label style="grid-column: 1 / -1;">Screening Notes
-            <textarea id="caregiver_concerns">Respondent reports limited eye contact, repetitive interests, and difficulty with back-and-forth conversation.</textarea>
-          </label>
-          <label style="grid-column: 1 / -1;">Transcript Excerpt
-            <textarea id="transcript_excerpt">Participant described repeated phrases, sensory sensitivity, and a preference for routines over spontaneous social interaction.</textarea>
-          </label>
-          <label style="grid-column: 1 / -1;">Follow-Up Plan
-            <textarea id="follow_up_plan">Review results with a clinician, compare with prior screening history, and decide whether specialist follow-up is appropriate.</textarea>
-          </label>
-        </div>
-
-        <div class="section-head" style="margin-top: 24px;">
-          <div>
-            <h2>Follow-Up Interview</h2>
-            <span>Structured prompts inspired by real screening workflows.</span>
-          </div>
-        </div>
-        <div class="behaviors">
-          <label class="behavior-pill"><input type="checkbox" data-follow-up value="Concern is consistent across settings or situations" checked />Concern consistent across settings</label>
-          <label class="behavior-pill"><input type="checkbox" data-follow-up value="Challenges are affecting routines, work, or study" checked />Affecting routines, work, or study</label>
-          <label class="behavior-pill"><input type="checkbox" data-follow-up value="Observed reduced reciprocity or shared attention" checked />Reduced reciprocity or shared attention</label>
-          <label class="behavior-pill"><input type="checkbox" data-follow-up value="Communication differences remain present over time" checked />Communication differences remain over time</label>
-          <label class="behavior-pill"><input type="checkbox" data-follow-up value="Respondent would like specialist follow-up" />Respondent wants specialist follow-up</label>
-          <label class="behavior-pill"><input type="checkbox" data-follow-up value="Another clinician or support professional raised similar concerns" />Another clinician raised similar concerns</label>
-        </div>
-
-        <div class="actions">
-          <button type="submit">Generate Screening Report</button>
-          <button type="button" class="secondary" id="predict-only">Run Model Only</button>
-        </div>
-      </form>
-
-      <section class="panel">
-        <div class="section-head">
-          <div>
-            <h2>Generated Report</h2>
-            <span>Designed to feel closer to a clinician handoff than raw model output.</span>
-          </div>
-        </div>
-
-        <div id="status" class="status">Waiting for intake submission.</div>
-        <div id="report-shell" class="report-shell" style="margin-top: 16px;">
-          <div class="empty-state">
-            Submit the form to generate a structured screening summary with risk band, workflow notes, and next steps.
-          </div>
-        </div>
+        <section class="panel expectations" aria-labelledby="expectations-title">
+          <h2 id="expectations-title">What to expect in the demo</h2>
+          <ol><li>Enter fictional adult participant information.</li><li>Enter ten already-scored questionnaire values.</li><li>Read the actual API summary and its limits, or explore a separately labelled illustrative example.</li></ol>
+        </section>
+        <section class="panel faq" aria-labelledby="faq-title">
+          <h2 id="faq-title">Before you begin</h2>
+          <h3>Can this tell me whether I am autistic?</h3><p>No. This project evaluates agreement with dataset screening labels. It has not been validated against independent clinical diagnoses.</p>
+          <h3>Are these raw questionnaire answers?</h3><p>No. The current demo accepts pre-scored binary item values. A respondent-facing questionnaire needs verified item wording and scoring.</p>
+          <h3>What does a perfect score mean here?</h3><p>The observed score threshold matches the labels in this dataset. That does not establish perfect diagnostic accuracy.</p>
+        </section>
+        <section class="panel tint reference-notes" aria-labelledby="references-title">
+          <h3 id="references-title">Design references</h3><p>ACEing Autism: welcoming introduction, predictable expectations, and FAQ structure. Embrace Autism: clear entry points and questionnaire information hierarchy. Original ASD-Predict copy and branding; no affiliation implied.</p>
+          <p><a href="https://aceingautism.org/ourprograms/" target="_blank" rel="noreferrer noopener">ACEing Autism programs (new tab)</a> &middot; <a href="https://embrace-autism.com/autism-tests/" target="_blank" rel="noreferrer noopener">Embrace Autism tests (new tab)</a></p>
+          <p>Research outcomes are separate from the live demo. <a href="#example">View the illustrative summary</a>.</p>
+        </section>
       </section>
-    </section>
-  </main>
 
-  <script>
-    const aqContainer = document.getElementById("aq-fields");
-    const defaults = [1, 1, 0, 1, 1, 0, 1, 1, 1, 0];
-    for (let i = 1; i <= 10; i += 1) {
-      const wrapper = document.createElement("div");
-      wrapper.className = "aq-card";
-      const label = document.createElement("label");
-      label.innerHTML = `<strong>A${i}_Score</strong><span>0 = no, 1 = yes</span>`;
-      const select = document.createElement("select");
-      select.id = `A${i}_Score`;
-      select.required = true;
-      select.innerHTML = '<option value="0">0</option><option value="1">1</option>';
-      select.value = String(defaults[i - 1]);
-      label.appendChild(select);
-      wrapper.appendChild(label);
-      aqContainer.appendChild(wrapper);
-    }
-
-    function setStatus(text) {
-      document.getElementById("status").textContent = text;
-    }
-
-    function collectBasePayload() {
-      const payload = {};
-      for (let i = 1; i <= 10; i += 1) {
-        payload[`A${i}_Score`] = Number(document.getElementById(`A${i}_Score`).value);
-      }
-      payload.age = Number(document.getElementById("age").value);
-      payload.gender = document.getElementById("gender").value;
-      payload.ethnicity = document.getElementById("ethnicity").value.trim();
-      payload.jaundice = document.getElementById("jaundice").value;
-      payload.country_of_res = document.getElementById("country_of_res").value.trim();
-      payload.relation = document.getElementById("relation").value.trim();
-      return payload;
-    }
-
-    function collectReportPayload() {
-      const payload = collectBasePayload();
-      payload.subject_name = document.getElementById("subject_name").value.trim();
-      payload.screener_name = document.getElementById("screener_name").value.trim();
-      payload.context = document.getElementById("context").value.trim();
-      payload.caregiver_concerns = document.getElementById("caregiver_concerns").value.trim();
-      payload.transcript_excerpt = document.getElementById("transcript_excerpt").value.trim();
-      payload.prior_screening_status = document.getElementById("prior_screening_status").value;
-      payload.referral_status = document.getElementById("referral_status").value;
-      payload.follow_up_plan = document.getElementById("follow_up_plan").value.trim();
-      payload.observed_behaviors = Array.from(document.querySelectorAll('.behavior-pill input:checked'))
-        .filter((input) => !input.hasAttribute("data-follow-up"))
-        .map((input) => input.value);
-      payload.follow_up_responses = Array.from(document.querySelectorAll('input[data-follow-up]:checked'))
-        .map((input) => input.value);
-      return payload;
-    }
-
-    function renderTags(items) {
-      if (!items.length) {
-        return '<span class="tag">No flags extracted</span>';
-      }
-      return items.map((item) => `<span class="tag">${item}</span>`).join("");
-    }
-
-    function renderReport(data) {
-      const result = data.screening_result;
-      const report = data.report;
-      const riskClass = result.risk_band;
-      const domains = report.behavioral_domains_flagged;
-      const followUp = report.follow_up_summary;
-      const domainMarkup = Object.entries(domains)
-        .map(([name, hits]) => `
-          <div class="report-card">
-            <h3>${name.replaceAll("_", " ")}</h3>
-            <div class="tag-list">${renderTags(hits)}</div>
-          </div>
-        `)
-        .join("");
-      const stepsMarkup = report.recommended_next_steps
-        .map((step) => `<div class="step">${step}</div>`)
-        .join("");
-
-      document.getElementById("report-shell").innerHTML = `
-        <div class="risk-banner ${riskClass}">
-          <div class="risk-top">
-            <div>
-              <div class="risk-level ${riskClass}">${result.risk_band} risk</div>
-              <p>${data.subject_name} | ${data.context}</p>
-            </div>
-            <div class="score-chip">Screening support only</div>
-          </div>
-          <div class="metric-grid">
-            <div class="metric">
-              <span>Model Probability</span>
-              <strong>${(result.probability * 100).toFixed(1)}%</strong>
-            </div>
-            <div class="metric">
-              <span>Positive AQ Items</span>
-              <strong>${report.aq_summary.high_response_count}/10</strong>
-            </div>
-            <div class="metric">
-              <span>Model Output</span>
-              <strong>${result.asd_traits_detected ? "Traits flagged" : "Traits not flagged"}</strong>
-            </div>
-          </div>
+      <section class="view" data-view="intake" aria-labelledby="intake-title" hidden>
+        <div class="page-heading"><p class="eyebrow">ASD-PREDICT / RESEARCH PROTOTYPE</p><h1 id="intake-title" tabindex="-1"><span class="desktop-title">A clearer screening-data workflow</span><span class="mobile-title">Adult data demo</span></h1><p class="muted">Explore adult screening data with transparent methods and clearly stated limits.</p></div>
+        <div class="scope"><p class="accent">Educational prototype &middot; Adults only</p><p>This demo reproduces questionnaire-based screening labels. It does not estimate a clinical probability of autism or provide a diagnosis.</p></div>
+        <div class="intake-layout">
+          <form id="screening-form" class="panel" novalidate autocomplete="off">
+            <div id="form-errors" class="error-panel" role="alert" aria-live="assertive" hidden></div>
+            <fieldset><legend>01 <span class="section-name">Participant details</span></legend>
+              <p class="small muted">Use fictional information. Prefilled fields are an editable fictional sample, not a recorded participant.</p>
+              <div class="form-grid">
+                <div class="field"><label for="subject_name">Participant name</label><input id="subject_name" name="subject_name" value="Sample Participant" required maxlength="120"></div>
+                <div class="field"><label for="screener_name">Respondent</label><input id="screener_name" name="screener_name" value="Self-report" required maxlength="120"></div>
+                <div class="field"><label for="context">Context</label><input id="context" name="context" value="Adult self-report" required maxlength="200"></div>
+                <div class="field"><label for="age">Age (18+)</label><input id="age" name="age" type="number" min="18" step="1" value="27" required inputmode="numeric"></div>
+              </div>
+              <details id="dataset-fields" class="foldable" open><summary>Additional dataset fields (six prefilled fictional values; review or edit)</summary><div class="form-grid">
+                <div class="field"><label for="gender">Gender &ndash; dataset category</label><select id="gender" name="gender" required><option value="m">m</option><option value="f">f</option><option value="other">other (not an original dataset category)</option></select></div>
+                <div class="field"><label for="ethnicity">Ethnicity &ndash; dataset category</label><input id="ethnicity" name="ethnicity" value="Latino" required maxlength="120"></div>
+                <div class="field"><label for="jaundice">Jaundice &ndash; dataset field</label><select id="jaundice" name="jaundice" required><option value="no">No</option><option value="yes">Yes</option></select></div>
+                <div class="field"><label for="country_of_res">Country of residence</label><input id="country_of_res" name="country_of_res" value="United States" required maxlength="120"></div>
+                <div class="field"><label for="relation">Relation</label><input id="relation" name="relation" value="Self" required maxlength="120"></div>
+                <div class="field"><label for="prior_screening_status">Prior screening</label><select id="prior_screening_status" name="prior_screening_status"><option>No prior screening documented</option><option>Prior screening completed with no major concerns</option><option>Prior screening flagged developmental concerns</option></select></div>
+              </div></details>
+            </fieldset>
+            <fieldset aria-describedby="aq-help"><legend>02 <span class="section-name">Pre-scored AQ items</span></legend>
+              <p id="aq-help" class="small muted">Research input: enter already-scored 0/1 values. These are not raw questionnaire answers. 0 and 1 are item scores, not labels for yes/no answers. A respondent questionnaire requires verified wording and scoring keys.</p>
+              <div id="aq-fields" class="form-grid"></div>
+            </fieldset>
+            <details id="notes-fields" class="foldable" open><summary>Optional notes and follow-up (editable fictional context)</summary><fieldset><legend>03 <span class="section-name">Notes and follow-up</span></legend>
+              <p class="small muted">Optional supplied context only. Notes do not enter the trained model and are not analysed by an LLM or computer vision.</p>
+              <div class="field"><label for="caregiver_concerns">Screening notes</label><textarea id="caregiver_concerns" name="caregiver_concerns" rows="2" maxlength="3000" placeholder="Optional supporting observations; use fictional information"></textarea></div>
+              <div class="field"><label for="transcript_excerpt">Transcript excerpt</label><textarea id="transcript_excerpt" name="transcript_excerpt" rows="2" maxlength="3000" placeholder="Optional excerpt; no identifying information"></textarea></div>
+              <div class="field"><label for="referral_status">Referral status (supplied workflow context)</label><select id="referral_status" name="referral_status"><option>No referral started</option><option>Referral pending clinician review</option><option>Referral submitted to specialist</option></select></div>
+              <div class="field"><label for="follow_up_plan">Follow-up plan (supplied text, not a model recommendation)</label><textarea id="follow_up_plan" name="follow_up_plan" rows="2" maxlength="3000">Discuss concerns with a qualified professional.</textarea></div>
+              <details><summary>Additional context fields (optional)</summary><div class="extra-fields"><div class="field"><label for="observed_behaviors">Observation tags &ndash; one per line</label><textarea id="observed_behaviors" name="observed_behaviors" rows="2" maxlength="3000"></textarea></div><div class="field"><label for="follow_up_responses">Follow-up workflow notes &ndash; one per line</label><textarea id="follow_up_responses" name="follow_up_responses" rows="2" maxlength="3000"></textarea></div></div></details>
+            </fieldset></details>
+            <p class="small muted">Inputs are sent to this FastAPI server. This page does not save them to browser storage. Use fictional data only; this is not a private clinical service.</p>
+            <div class="actions"><button id="submit-report" type="submit">Generate demo summary</button><button id="predict-only" type="button" class="secondary">Run model only</button></div>
+          </form>
+          <aside class="panel waiting" aria-labelledby="waiting-title"><h2 id="waiting-title">Your summary</h2><p id="intake-status" class="accent" role="status" aria-live="polite">Waiting for submission</p><p class="muted">Complete the intake to view the item total, model output, and supporting notes.</p><h2>What the model measures</h2><p>Agreement with dataset screening labels. High agreement does not establish clinical diagnostic performance.</p><h2>Supporting notes</h2><p class="muted">Notes are supplied context; they are not validated diagnostic evidence.</p><a href="#example">View illustrative summary <span aria-hidden="true">&rarr;</span></a></aside>
         </div>
+        <div class="scope mobile-scope"><p class="accent">No clinical probability</p><p>Model agreement reflects the dataset labels. Personal concerns belong with a qualified professional, not this prototype.</p><a href="#example">View illustrative summary</a></div>
+      </section>
 
-        <div class="report-card">
-          <h3>Clinical Impression</h3>
-          <p>${report.clinical_impression}</p>
-        </div>
+      <section class="view" data-view="summary" aria-labelledby="summary-title" hidden>
+        <div class="page-heading"><p class="eyebrow">ASD-PREDICT / RESEARCH PROTOTYPE</p><h1 id="summary-title" tabindex="-1">Understand the output</h1><p class="muted">Read an actual API result, with its limitations made explicit.</p></div>
+        <div class="scope"><p class="accent">Educational prototype &middot; Adults only</p><p>This demo does not estimate a clinical probability of autism or provide a diagnosis.</p></div>
+        <div id="live-summary" class="stack"></div>
+        <div class="actions"><a class="button" href="#intake">Return to intake</a><a class="button secondary" href="#research">Read research evidence</a></div>
+      </section>
 
-        <div class="report-card">
-          <h3>Positive AQ Items</h3>
-          <div class="tag-list">${renderTags(report.aq_summary.positive_items)}</div>
-        </div>
+      <section class="view" data-view="example" aria-labelledby="example-title" hidden>
+        <div class="page-heading"><p class="eyebrow">ASD-PREDICT / RESEARCH PROTOTYPE</p><h1 id="example-title" tabindex="-1">Understand the output</h1><p class="muted">An illustration of the layout, not a prediction or recorded participant.</p></div>
+        <div class="scope"><p class="accent">Educational prototype &middot; Adults only</p><p>This demo reproduces questionnaire-based screening labels. It does not estimate a clinical probability of autism or provide a diagnosis.</p></div>
+        <article class="panel"><p class="eyebrow">Illustrative example &middot; not a live model result</p><h2>Sample Participant / adult self-report</h2><dl class="metrics"><div><dt>Item total</dt><dd>7 / 10</dd></div><div><dt>Dataset-rule output (illustrative)</dt><dd>Positive label</dd></div><div><dt>Clinical probability</dt><dd>Not established</dd></div></dl><h2>Reading this example</h2><p>The observed &ge;7 rule reconstructs labels in the adult dataset. It is different from the documented &ge;6 referral-consideration rule. Neither should be presented here as a diagnosis.</p></article>
+        <article class="panel"><h2>Supporting notes</h2><p>Example notes describe communication differences and sensory preferences. They are shown as supplied, without a clinical impression.</p></article>
+        <article class="panel"><h2>Follow-up workflow</h2><p>Prior screening: not documented. Referral: not started. Plan: discuss concerns with a qualified professional.</p></article>
+        <article class="panel"><h2>Model limitations</h2><p>Independent diagnostic outcomes and clinical external validation are not established. Demographic associations cannot establish their cause.</p></article>
+        <a class="button" href="#intake">Return to intake</a>
+      </section>
 
-        ${domainMarkup}
+      <section class="view" data-view="research" aria-labelledby="research-title" hidden>
+        <div class="page-heading"><p class="eyebrow">ASD-PREDICT / RESEARCH PROTOTYPE</p><h1 id="research-title" tabindex="-1">Look beyond perfect accuracy</h1><p class="muted">Explore adult screening data with transparent methods and clearly stated limits.</p></div>
+        <div class="scope"><p class="accent">Educational prototype &middot; Adults only</p><p>These experiments measure screening-label agreement, not validated diagnostic performance.</p></div>
+        <section class="panel tint"><h2>What does the model actually learn?</h2><p>How much of the apparent ML performance is explained by reconstructing an AQ-score threshold, and what signal remains when questionnaire information is removed?</p></section>
+        <section class="panel" aria-labelledby="evidence-title"><h2 id="evidence-title">Adult dataset &middot; grouped validation</h2><p id="evidence-status" class="small muted" role="status" aria-live="polite">Evidence loads from hash-verified committed experiment outputs.</p><div id="research-results"></div><button id="retry-evidence" type="button" class="secondary" hidden>Retry loading evidence</button></section>
+        <section class="panel"><h2>Why removing the sum is insufficient</h2><p>The ten individual items still contain the information needed to reconstruct their sum and its threshold. Removing all questionnaire information also requires removing the individual items and recorded result.</p></section>
+        <section class="panel"><h2>Interpret uncertainty carefully</h2><p>Repeated cross-validation predictions share training data. Split variability and conditional bootstrap intervals are not validated generalization intervals. Repeats are not independent studies.</p></section>
+        <section class="panel"><h2>Evidence still needed</h2><p>Independent diagnoses, participant identifiers, recruitment details, clinical external validation, and a verified contribution relative to prior work. Label generation and item encoding are not established by accessible documentation.</p></section>
+        <section class="panel" aria-labelledby="figures-title"><h2 id="figures-title">Explore the committed research figures</h2><p class="small muted">Figures are read directly from the pinned research outputs, not recreated from illustrative numbers.</p><div id="research-figures" class="figure-grid"></div></section>
+      </section>
 
-        <div class="report-card">
-          <h3>Screening Notes</h3>
-          <p>${report.caregiver_concerns}</p>
-        </div>
-
-        <div class="report-card">
-          <h3>Follow-Up Workflow</h3>
-          <p><strong>Prior screening:</strong> ${followUp.prior_screening_status}</p>
-          <p><strong>Referral status:</strong> ${followUp.referral_status}</p>
-          <p><strong>Plan:</strong> ${followUp.follow_up_plan}</p>
-          <div class="tag-list" style="margin-top: 10px;">${renderTags(followUp.follow_up_items)}</div>
-        </div>
-
-        <div class="report-card">
-          <h3>Transcript Excerpt</h3>
-          <p>${report.transcript_excerpt}</p>
-        </div>
-
-        <div class="report-card">
-          <h3>Recommended Next Steps</h3>
-          <div class="step-list">${stepsMarkup}</div>
-        </div>
-
-        <div class="report-card">
-          <h3>API Response</h3>
-          <div class="mono">${JSON.stringify(data, null, 2)}</div>
-        </div>
-      `;
-    }
-
-    function renderPrediction(data) {
-      document.getElementById("report-shell").innerHTML = `
-        <div class="risk-banner ${data.risk_band}">
-          <div class="risk-top">
-            <div>
-              <div class="risk-level ${data.risk_band}">${data.risk_band} risk</div>
-              <p>Quick model-only run</p>
-            </div>
-            <div class="score-chip">Prediction endpoint</div>
-          </div>
-          <div class="metric-grid">
-            <div class="metric">
-              <span>Model Probability</span>
-              <strong>${(data.probability * 100).toFixed(1)}%</strong>
-            </div>
-            <div class="metric">
-              <span>Sum Score</span>
-              <strong>${data.sum_score}</strong>
-            </div>
-            <div class="metric">
-              <span>Output</span>
-              <strong>${data.asd_traits_detected ? "Traits flagged" : "Traits not flagged"}</strong>
-            </div>
-          </div>
-        </div>
-        <div class="report-card">
-          <h3>Raw Response</h3>
-          <div class="mono">${JSON.stringify(data, null, 2)}</div>
-        </div>
-      `;
-    }
-
-    async function sendRequest(path, payload, renderer, pendingLabel) {
-      setStatus(pendingLabel);
-      try {
-        const response = await fetch(path, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const data = await response.json();
-        if (!response.ok) {
-          setStatus("Request failed.");
-          document.getElementById("report-shell").innerHTML = `
-            <div class="report-card">
-              <h3>Error</h3>
-              <div class="mono">${JSON.stringify(data, null, 2)}</div>
-            </div>
-          `;
-          return;
-        }
-        setStatus("Report ready.");
-        renderer(data);
-      } catch (error) {
-        setStatus("Connection error.");
-        document.getElementById("report-shell").innerHTML = `
-          <div class="report-card">
-            <h3>Error</h3>
-            <div class="mono">${String(error)}</div>
-          </div>
-        `;
-      }
-    }
-
-    document.getElementById("screening-form").addEventListener("submit", async (event) => {
-      event.preventDefault();
-      await sendRequest(
-        "/screening-report",
-        collectReportPayload(),
-        renderReport,
-        "Generating structured screening report..."
-      );
-    });
-
-    document.getElementById("predict-only").addEventListener("click", async () => {
-      await sendRequest(
-        "/predict",
-        collectBasePayload(),
-        renderPrediction,
-        "Running model-only prediction..."
-      );
-    });
-  </script>
+      <section class="view" data-view="about" aria-labelledby="about-title" hidden>
+        <div class="page-heading"><p class="eyebrow">ASD-PREDICT / RESEARCH PROTOTYPE</p><h1 id="about-title" tabindex="-1">Research you can inspect</h1><p class="muted">An undergraduate computer science project about what screening-data models learn.</p></div>
+        <section class="panel tint"><h2>Methods and provenance</h2><p>The adult UCI dataset contains ten scored items and YES/NO screening labels. The experiments compare simple scoring rules with machine learning, using training-fold preprocessing and duplicate-group-aware validation. They do not establish how labels were generated or whether they represent independent diagnoses.</p></section>
+        <section class="panel"><h2>Reproduce the analysis</h2><p>Use the research checkout and its pinned Python 3.14.5 environment:</p><pre><code>python3.14 scripts/reproduce.py</code></pre><p>The UI does not retrain models or rewrite experiment results. Its research evidence version is recorded in <code>src/static/research-version.json</code>.</p><ul class="document-links"><li><a href="https://github.com/EvansCortez/autism-screening-ai/blob/ace0186c2ee3c6a8f40d0b20803acc0a59be84c7/research/STUDY.md">Study methods and dataset sources</a></li><li><a href="https://github.com/EvansCortez/autism-screening-ai/blob/ace0186c2ee3c6a8f40d0b20803acc0a59be84c7/research/FINDINGS.md">Computed findings</a></li><li><a href="https://github.com/EvansCortez/autism-screening-ai/blob/ace0186c2ee3c6a8f40d0b20803acc0a59be84c7/research/RELATED_WORK.md">Literature comparison and access limitations</a></li><li><a href="/docs">API contract</a></li></ul></section>
+        <section class="panel"><h2>What this project does not claim</h2><p>It is not a diagnostic product or a clinical service. Notes are supplied text, not validated diagnostic findings. No LLM, video, speech or computer-vision analysis is performed by this workflow. A finding about demographic fields does not establish why that association exists.</p></section>
+        <a class="button" href="#intake">Explore the demo</a>
+      </section>
+    </main>
+    <footer><p>ASD-Predict &middot; Educational research prototype. Use fictional inputs only.</p><a href="#welcome">Back to welcome</a></footer>
+  </div>
 </body>
 </html>
