@@ -27,6 +27,14 @@
       "support": 141.0
     }
   },
+  "cross_validation": {
+    "folds": 5,
+    "accuracy_mean": 1.0,
+    "accuracy_std": 0.0,
+    "f1_mean": 1.0,
+    "f1_std": 0.0
+  },
+  "baseline_accuracy": 0.7305,
   "training_rows": 563,
   "test_rows": 141,
   "features": [

@@ -1,0 +1,27 @@
+{
+  "seed": 2026,
+  "configurations": [
+    [
+      150,
+      500
+    ],
+    [
+      704,
+      300
+    ]
+  ],
+  "flip_probabilities": [
+    0.0,
+    0.05,
+    0.15
+  ],
+  "fresh_rows": 20000,
+  "versions": {
+    "python": "3.14.5",
+    "numpy": "2.4.3",
+    "pandas": "3.0.1",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0"
+  },
+  "interpretation": "Best case for a binomial interval: independent rows, stable model, known truth. Not a guarantee for real data."
+}

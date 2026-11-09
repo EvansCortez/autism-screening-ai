@@ -1,0 +1,25 @@
+\begin{table}
+\caption{Whole-procedure bootstrap and country-cluster checks against the binomial standard error}
+\label{tab:table6_uncertainty_checks}
+\begin{tabular}{llllllllll}
+\toprule
+method & draws & binomial\_se & bootstrap\_se & bootstrap\_se\_ratio & repeat\_sd & distinct\_row\_fraction & row\_level\_se & country\_cluster\_se & country\_se\_ratio \\
+\midrule
+aq\_ge6 &  &  &  &  &  &  & 0.0113 & 0.0138 & 1.2218 \\
+aq\_ge7 &  &  &  &  &  &  & 0.0000 & 0.0000 &  \\
+dummy &  &  &  &  &  &  & 0.0167 & 0.0539 & 3.2244 \\
+forest/combined\_with\_sum &  &  &  &  &  &  & 0.0000 & 0.0000 &  \\
+forest/combined\_without\_sum &  &  &  &  &  &  & 0.0086 & 0.0098 & 1.1390 \\
+forest/non\_questionnaire &  &  &  &  &  &  & 0.0171 & 0.0654 & 3.8116 \\
+forest/questionnaire\_only &  &  &  &  &  &  & 0.0095 & 0.0108 & 1.1343 \\
+logistic/combined\_with\_sum &  &  &  &  &  &  & 0.0000 & 0.0000 &  \\
+logistic/combined\_without\_sum &  &  &  &  &  &  & 0.0014 & 0.0013 & 0.9444 \\
+logistic/non\_questionnaire & 200.0000 & 0.0176 & 0.0254 & 1.4466 & 0.0086 & 0.6325 & 0.0174 & 0.0651 & 3.7339 \\
+logistic/questionnaire\_only &  &  &  &  &  &  & 0.0000 & 0.0000 &  \\
+tree/combined\_with\_sum &  &  &  &  &  &  & 0.0000 & 0.0000 &  \\
+tree/combined\_without\_sum & 200.0000 & 0.0123 & 0.0192 & 1.5556 & 0.0123 & 0.6325 & 0.0117 & 0.0086 & 0.7350 \\
+tree/non\_questionnaire &  &  &  &  &  &  & 0.0176 & 0.0676 & 3.8429 \\
+tree/questionnaire\_only &  &  &  &  &  &  & 0.0118 & 0.0086 & 0.7348 \\
+\bottomrule
+\end{tabular}
+\end{table}

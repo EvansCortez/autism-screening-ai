@@ -1,0 +1,19 @@
+**Screening-label agreement, primary cohort (n = 704), grouped five-fold validation**
+
+| Method and features | Accuracy (mean of 3 repeats) | Repeat SD (not a CI) | Precision | Recall | F1 | ROC-AUC |
+| --- | --- | --- | --- | --- | --- | --- |
+| Majority class | 0.7315 | 0.0000 | 0.0000 | 0.0000 | 0.0000 | 0.5000 |
+| Rule: total >= 6 (documented referral cut-off) | 0.9006 | 0.0000 | 0.7297 | 1.0000 | 0.8438 | 1.0000 |
+| Rule: total >= 7 (matches labels) | 1.0000 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| Logistic, items + sum + demographics | 0.9995 | 0.0008 | 0.9982 | 1.0000 | 0.9991 | 1.0000 |
+| Logistic, items + demographics | 0.9991 | 0.0008 | 0.9965 | 1.0000 | 0.9982 | 1.0000 |
+| Logistic, items only | 1.0000 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| Logistic, age and categories only | 0.6804 | 0.0086 | 0.4434 | 0.7443 | 0.5556 | 0.7405 |
+| Tree, items + sum + demographics | 1.0000 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| Tree, items + demographics | 0.8778 | 0.0123 | 0.7216 | 0.8889 | 0.7964 | 0.9430 |
+| Tree, items only | 0.8802 | 0.0100 | 0.7267 | 0.8889 | 0.7995 | 0.9472 |
+| Tree, age and categories only | 0.6866 | 0.0071 | 0.4409 | 0.6296 | 0.5185 | 0.6947 |
+| Forest, items + sum + demographics | 1.0000 | 0.0000 | 1.0000 | 1.0000 | 1.0000 | 1.0000 |
+| Forest, items + demographics | 0.9536 | 0.0110 | 0.8770 | 0.9630 | 0.9178 | 0.9925 |
+| Forest, items only | 0.9422 | 0.0107 | 0.8431 | 0.9647 | 0.8997 | 0.9924 |
+| Forest, age and categories only | 0.7027 | 0.0059 | 0.4669 | 0.7601 | 0.5785 | 0.7370 |

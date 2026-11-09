@@ -1,0 +1,36 @@
+{
+  "seeds": [
+    42,
+    137,
+    2026
+  ],
+  "bootstrap_draws": 200,
+  "permutation_draws": 200,
+  "cluster_draws": 2000,
+  "bootstrap_seed": 9102,
+  "thresholds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+  ],
+  "input_sha256": "657021cddb337358640470cea758b72087bc4519e1234f7bc59c2b0160a0060d",
+  "evaluation_predictions_sha256": "f7c72bd296cfc6c87f1ce2ffef770ebef2c1009f10ea43440e0af5cef173bccb",
+  "code_sha256": "648e599f5de5496ec7b362439526ed559e3b98168fb117592c464cb16f749aec",
+  "versions": {
+    "python": "3.14.5",
+    "numpy": "2.4.3",
+    "pandas": "3.0.1",
+    "scipy": "1.17.1",
+    "sklearn": "1.8.0"
+  },
+  "interpretation": "Descriptive uncertainty and robustness analyses. Not clinical validation. Repeated cross-validation predictions are not independent observations."
+}

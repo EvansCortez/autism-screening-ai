@@ -1,0 +1,88 @@
+{
+  "rows": 704,
+  "class_counts": {
+    "NO": 515,
+    "YES": 189
+  },
+  "missing_markers": {
+    "A1_Score": 0,
+    "A2_Score": 0,
+    "A3_Score": 0,
+    "A4_Score": 0,
+    "A5_Score": 0,
+    "A6_Score": 0,
+    "A7_Score": 0,
+    "A8_Score": 0,
+    "A9_Score": 0,
+    "A10_Score": 0,
+    "age": 2,
+    "gender": 0,
+    "ethnicity": 95,
+    "jundice": 0,
+    "austim": 0,
+    "contry_of_res": 0,
+    "used_app_before": 0,
+    "result": 0,
+    "age_desc": 0,
+    "relation": 95,
+    "Class/ASD": 0
+  },
+  "duplicate_full_rows": 5,
+  "duplicate_predictor_rows": 6,
+  "age_outside_18_100_or_missing": 21,
+  "result_sum_disagreements": 0,
+  "rule_ge7_label_disagreements": 0,
+  "rule_ge6_label_disagreements": 70,
+  "legacy_holdout_predictor_overlap": 2,
+  "legacy_cv_predictor_overlap": [
+    1,
+    2,
+    0,
+    4,
+    1
+  ],
+  "legacy_holdout_comparison": {
+    "logistic": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "specificity": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "tn": 103,
+      "fp": 0,
+      "fn": 0,
+      "tp": 38
+    },
+    "aq_ge7": {
+      "accuracy": 1.0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "specificity": 1.0,
+      "f1": 1.0,
+      "roc_auc": 1.0,
+      "tn": 103,
+      "fp": 0,
+      "fn": 0,
+      "tp": 38
+    },
+    "aq_ge6": {
+      "accuracy": 0.9148936170212766,
+      "precision": 0.76,
+      "recall": 1.0,
+      "specificity": 0.883495145631068,
+      "f1": 0.8636363636363636,
+      "roc_auc": 1.0,
+      "tn": 91,
+      "fp": 12,
+      "fn": 0,
+      "tp": 38
+    }
+  },
+  "source_verification": {
+    "archive_sha256": "c57b29866c9715ff49ff4cce52228e6c460bdce3f615000c33b4d53df99d6d09",
+    "all_raw_cells_and_row_order_match": true,
+    "original_rows": 704,
+    "archive": "research/sources/uci_adult_426.zip"
+  }
+}
