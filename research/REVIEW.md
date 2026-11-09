@@ -671,3 +671,40 @@ full text not read unless stated)
 - Per-fold metrics were not re-derived.
 - Reproducibility across Python and scikit-learn versions was not tested.
 - No analysis was run on the UCI child or adolescent datasets.
+
+## Addendum 2026-11-09: independent review of Codex's corrections (task X14)
+
+Reviewed from a fresh clone of the GitHub branch (head `ace0186`, then this commit), because the local
+checkout has evicted git objects (see `TASKS.md`). Codex had corrected several things in my uncertainty
+module; I tested each rather than accepting its account.
+
+**Verified independently**
+
+- *Clean reproduction.* `python3.14 scripts/reproduce.py` in a fresh Python 3.14.5 environment: 38 tests pass,
+  Codex's `scripts/verify_outputs.py` passes, and `git status` is empty, so every tracked output regenerated
+  byte-for-byte (same Mac; other operating systems untested). The branch's GitHub CI job also passed.
+- *Permutation null.* My original null compared an observed AUC averaged over three repeats with null draws
+  from a single repeat: a real mismatch, correctly fixed. I re-implemented the corrected test with my own code
+  and my own random seed: shuffled-label AUC mean 0.4994, SD 0.0308 (Codex: 0.4986, 0.0286); two-sample
+  Kolmogorov-Smirnov p = 0.39, so the distributions agree. The observed 0.7405 exceeds all 200 of my draws
+  (largest 0.6075).
+- *Leave-one-country-out.* My own implementation reproduces the saved metrics exactly, including every
+  row-level prediction for all three seeds (mean AUC 0.6865; accuracy 0.680, 0.673, 0.678).
+- *Interval corrections.* Agreed. The `>= 7` threshold was discovered using all labels, so the original holdout
+  cannot test it, and the "pre-specified rule" bound did not apply to a rule found post hoc. My earlier
+  "somewhat overstated" claim about bootstrap spread was unsupported and rightly removed.
+
+**Recommendations (not blocking)**
+
+1. Figure 6's grey band is the minimum to maximum of 200 shuffles. That range depends on the draw: Codex's
+   range is 0.427-0.577, mine 0.405-0.608. A 2.5-97.5 percentile band, or a stated draw count, would be more
+   stable. The conclusion does not change (smallest possible p-value, 1/201).
+2. `FINDINGS.md` says an interval on pooled predictions "omits retraining variability". That fits the
+   conditional bootstrap (fixed predictions) but not the binomial interval on pooled out-of-fold predictions,
+   which includes five refits but treats dependent predictions as independent. Separate the two sentences.
+3. The country-held-out AUC pools predictions from 67 different models, so differences in calibration between
+   models can lower the pooled AUC. The comparison with 0.7405 changes the validation task as well as removing
+   country identity. The documents already avoid causal claims; keep it that way.
+
+**Closed by this commit.** The claim that exact intervals cover about 88-91% (best case, known truth) is now
+reproducible: `src/coverage_simulation.py` reproduces the six earlier scratch results exactly.

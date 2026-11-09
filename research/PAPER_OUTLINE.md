@@ -96,7 +96,7 @@ threshold-derived. Do not state novelty until these are read.
 | R7 | Child dataset has the same threshold structure (cutoff 7; 40 disagreements for 6) | `research/circularity/child` | **[repo]** |
 | R8 | Sensitivity cohort: rule 7 and items-only perfect; with-sum 0.9995, without-sum 0.9966 | `summary.csv` | **[repo]** |
 | R9 | Whole-procedure bootstrap (SE ratios 1.45 and 1.56), country clustering (3.7-3.8 for non-questionnaire models), nested cut-off (7 in 15 of 15 folds) | `uncertainty/*.csv` | **[repo]** |
-| R9b | Exact intervals cover 88-91% at nominal 95% in a known-truth simulation | scratch | **[scratch]** |
+| R9b | Exact intervals cover about 88-91% at nominal 95% in a known-truth best-case simulation (label noise 5% and 15%) | `uncertainty/interval_coverage_simulation.csv` | **[repo]**; implemented by Claude, reproduces the earlier scratch numbers exactly; not independently reviewed |
 | R10 | Subgroup counts with Wilson intervals, descriptive only | `uncertainty/subgroup_counts.csv` | **[repo]** |
 | R11 | Country-held-out residual logistic mean AUC 0.6865 versus grouped five-fold 0.7405; different validation tasks, no causal interpretation | `uncertainty/leave_country_out_metrics.csv`, `report/tables/table8_country_held_out.csv` | **[repo]**; new Codex analysis, independent review pending |
 
@@ -140,7 +140,7 @@ comparisons (only White-European has 30 or more positives); no systematic litera
 2. Independent review by Claude/lead of Codex's corrections and country-held-out analysis.
    Codex reviewed Claude's original modules and six figures; this does not independently
    verify the corrections Codex subsequently authored.
-3. A simulation of interval coverage that lives in the repository (it is still scratch-only).
+3. Independent review of `src/coverage_simulation.py` (new; it reproduces the earlier scratch numbers exactly).
 4. Participant identifiers or documented collection structure to verify person-level separation.
 5. Adolescent dataset check.
 6. Systematic literature search; unread papers listed in section 2.

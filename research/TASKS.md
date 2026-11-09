@@ -91,7 +91,8 @@ Subsequent changes only update documentation/handoff. See `CODEX_VERIFICATION.md
 | X11 | Keep application changes separate | DONE-VERIFIED | `git diff HEAD -- src/train.py src/main.py src/static models` is empty |
 | X12 | Dataset checksum must hold in a clean clone | DONE (found by C5) | With `core.autocrlf=input` git stored `data/train.csv` with LF endings; the pinned checksum is for the CRLF file, so the runner refused to start in any clone. Fixed with `.gitattributes` (`data/train.csv -text`) and a byte-exact re-add; checksum and results unchanged. The pull request shows the whole file as changed (line endings only). |
 | X13 | Reproduce Codex corrections from committed clean checkout | DONE (same-agent reproducibility check) | Clean local clone of `c7059ae`: fresh Python 3.14.5 venv, full command exit 0, 38 tests pass, 90 metric rows checked, `git status --short` empty. All tracked outputs identical; scientific review remains X14. |
-| X14 | Independent scientific review of Codex corrections | OPEN | Next Claude/lead handoff: permutation statistic/exchangeability, interval wording, country-held-out analysis and figure 6. |
+| X14 | Independent scientific review of Codex corrections | DONE (Claude, 2026-11-09) | Agree with all five corrections. My own re-implementations (no Codex code): leave-one-country-out identical to saved output including every row-level prediction; corrected permutation null same distribution (KS p = 0.39), observed 0.7405 above all 200 of my draws; clean-clone reproduction of `ace0186`: 38 tests, verifier passes, `git status` clean. Non-blocking recommendations in `REVIEW.md` addendum (quantile band for figure 6; one wording nit). |
+| X15 | Interval-coverage simulation in the repository | DONE, self-verified | Claude: `src/coverage_simulation.py`, `research/uncertainty/interval_coverage_simulation.csv`, 3 tests; reproduces all six earlier scratch results exactly. Needs independent review. |
 
 ### C. Shared
 
@@ -173,6 +174,25 @@ Source: `REVIEW.md` F6, checked against two papers read in full (Bengio and Gran
   Do not claim novelty; Bone et al. (2015) already argued the concept for ADOS and ADI-R.
 
 ## 8. Handoff log (newest first)
+
+### 2026-11-09 Claude Code: X14 review and X15 (lock was none; released)
+
+- **State found:** PR #1 (research, head `ace0186`) is open, mergeable, and its GitHub CI job passed; PR #2 (UI,
+  stacked on #1) is open with its browser check passed. Nothing is merged.
+- **X14 done.** I reviewed Codex's `c7059ae` and `ace0186` from a fresh clone of the GitHub branch and agree with
+  all five corrections. Independent checks and two non-blocking recommendations are in the addendum at the end of
+  `REVIEW.md`.
+- **X15 done.** The interval-coverage simulation behind the "88-91%" statement is now `src/coverage_simulation.py`
+  with output in `research/uncertainty/`, wired into `scripts/reproduce.py` (41 tests pass; full run about 4 minutes).
+  It reproduces my earlier scratch numbers exactly. Codex or the lead should review it, because I wrote and
+  checked it myself.
+- **Environment hazard for the lead (not a repo defect):** the checkout under `~/Documents` has git objects that
+  macOS has evicted to iCloud ("dataless"); reading them hangs (`git show`, `git fetch`, even a plain file read).
+  The project lives in an iCloud-managed folder; consider moving it out of `~/Documents` or turning off
+  "Optimize Mac Storage". I worked from a fresh clone of GitHub instead and changed nothing in your checkout.
+- **Still open (unchanged):** your section of `AI_ASSISTANCE.md`, label-generation provenance, unread papers
+  (Thabtah 2017 and 2018, Kaufman 2012, Nadeau and Bengio 2003), adolescent dataset, Linux reproduction of the full
+  command, Docker build, and the decision on legacy `models/metrics.json`.
 
 ### 2026-10-12 13:05 Codex to Claude and the project lead (lock released)
 
@@ -257,3 +277,4 @@ Source: `REVIEW.md` F6, checked against two papers read in full (Bengio and Gran
 | 2026-10-11 23:58 | Claude Code | Took the lock; claimed X7-X10 after 27 minutes of Codex inactivity |
 | 2026-10-12 00:15 | Claude Code | Implemented X7-X10; committed in six commits; found and fixed X12; opened PR #1; released the lock |
 | 2026-10-12 13:05 | Codex | Reviewed Claude additions, corrected uncertainty/null interpretation, added country-held-out check and output verifier; 38 tests and byte-identical clean-clone reproduction of `c7059ae`; released lock for X14 |
+| 2026-11-09 | Claude Code | Reviewed Codex corrections (X14) from a fresh GitHub clone; added the coverage simulation to the repository (X15); no lock held at the end |

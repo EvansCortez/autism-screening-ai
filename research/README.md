@@ -50,6 +50,8 @@ Codex's review of Claude's additions and subsequent corrections are in
 - `uncertainty/leave_country_out_metrics.csv`, `leave_country_out_by_country.csv`,
   `leave_country_out_predictions.csv`: residual-model robustness when each recorded country
   is absent from training. Single-class country AUC is undefined, not zero.
+- `uncertainty/interval_coverage_simulation.csv`: simulation with known truth of how often exact and
+  Wilson intervals on pooled cross-validation predictions contain the expected accuracy (a best case).
 - `uncertainty/residual_decomposition.csv`, `missing_block.csv`, `subgroup_counts.csv`:
   where the non-questionnaire signal comes from, and descriptive group counts.
 - `report/figures/` (SVG, PDF, PNG) and `report/tables/` (CSV, Markdown, LaTeX): publication

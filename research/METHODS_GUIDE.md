@@ -9,7 +9,7 @@ Companion to the formal protocol in [STUDY.md](STUDY.md).
   `research/circularity/` or `research/uncertainty/`. Independent checks and their limits
   are recorded in `TASKS.md`; this tag alone does not certify independent verification.
 - **[scratch]** computed by Claude Code scratch scripts that were reproduced in a clean environment
-  but are **not in the repository**: the interval-coverage simulation, the tree leaf-size follow-up,
+  but are **not in the repository**: the tree leaf-size follow-up,
   and the 8-item check of Rasul et al. (see [TASKS.md](TASKS.md)).
 - **[source]** read from a cited paper or form (see [RELATED_WORK.md](RELATED_WORK.md)).
 - **[hypothesis]** untested; do not state as a finding.
@@ -134,7 +134,7 @@ these, and we make no claim about why groups differ.
 |---|---|---|
 | "0 of 704 rows disagree with the 7-rule" | A fact about this file | An estimate of future accuracy |
 | Exact interval on a **single holdout** or a **rule fixed in advance** (the 6-rule) | Valid if test rows are independent and the rule was not tuned on them | Valid for the post-hoc 7-rule without adjustment |
-| Exact or Wilson interval on **pooled cross-validation predictions** | Omits retraining variability; not guaranteed to be a lower bound | A validated confidence interval. Simulation with known truth: 88-91% coverage for a nominal 95% **[scratch]**. Bengio and Grandvalet prove no unbiased variance estimator for K-fold CV exists **[source]**. |
+| Exact or Wilson interval on **pooled cross-validation predictions** | Omits retraining variability; not guaranteed to be a lower bound | A validated confidence interval. Simulation with known truth: about 88-91% coverage for a nominal 95% in a best-case simulation **[repo]** (`uncertainty/interval_coverage_simulation.csv`). Bengio and Grandvalet prove no unbiased variance estimator for K-fold CV exists **[source]**. |
 | "+/- SD over seeds" | Variability from how rows were split | A confidence interval. Against a whole-procedure bootstrap standard error it is 0.34 (non-questionnaire logistic) and 0.64 (tree without the sum) **[repo]** |
 | Conditional group bootstrap in `conditional_bootstrap.csv` | Test-row sampling noise given fixed predictions | Retraining variability; gives [1, 1] for perfect predictions |
 

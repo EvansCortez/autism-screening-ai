@@ -50,6 +50,7 @@ def main():
         "--seeds", *protocol["seeds"], "--bootstrap-draws", uncertainty["bootstrap_draws"],
         "--permutation-draws", uncertainty["permutation_draws"], "--cluster-draws", uncertainty["cluster_draws"],
         "--bootstrap-seed", uncertainty["bootstrap_seed"])
+    run(python, "-m", "src.coverage_simulation", "--output", "research/uncertainty")
     run(python, "-m", "src.report_assets", "--evaluation", "research/evaluation", "--circularity", "research/circularity",
         "--uncertainty", "research/uncertainty", "--output", "research/report")
     run(python, "scripts/verify_outputs.py")

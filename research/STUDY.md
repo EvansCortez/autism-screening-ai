@@ -109,7 +109,9 @@ future performance. ROC-AUC uncertainty is summarized by repeat/fold SD only.
 training data, the same rows recur across repeats, and Bengio and Grandvalet (2004) prove that no
 unbiased estimator of the variance of K-fold cross-validation exists. An exact or Wilson interval
 on pooled out-of-fold predictions does not provide a validated generalization interval. In a simulation with known
-truth (independent rows, stable model) exact intervals covered 88-91% at a nominal 95%. The
+truth (independent rows, stable model; `uncertainty/interval_coverage_simulation.csv`) exact intervals
+covered about 88-91% at a nominal 95% when labels had noise, which is a best case for a binomial
+interval and not a guarantee for real data. The
 `uncertainty/` analyses (`python -m src.uncertainty`) report, with what each depends on:
 
 - counts first (for the `>= 7` rule, zero disagreements is a fact about this file);
